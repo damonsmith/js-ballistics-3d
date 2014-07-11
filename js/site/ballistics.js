@@ -25,8 +25,9 @@
             0.1,            // Near plane
             10000           // Far plane
         );
-        camera.position.set( -8, 8, 12 );
+        camera.position.set( 0, 50, 120 );
         camera.lookAt( scene.position );
+        
         var tank = new Tank();
         tank.addToScene(scene);
 

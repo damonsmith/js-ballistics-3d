@@ -73,6 +73,9 @@ function Tank() {
         else if (event.keyCode == 39) {
             self.keys.right = false;
         }
+        else if (event.keyCode == 70) {
+            self.fire();
+        }
     });
 
 }
@@ -91,9 +94,32 @@ Tank.prototype.step = function(delta) {
     if (this.keys.right) {
         this.parts.turret.rotation.y -= delta;
     }
+    if (this.bomb) {
+        this.bomb.step(delta);
+    }
 }
 
 Tank.prototype.addToScene = function(scene) {
     scene.add(this.container);
+    this.scene = scene;
+};
+
+Tank.prototype.fire = function() {
+    if (!this.bomb) {
+
+        var position = {};
+        position.x = this.parts.gun.position.x;
+        position.y = this.parts.gun.position.y;
+        position.z = this.parts.gun.position.z;
+
+        var vector = {};
+        vector.x = Math.cos(this.parts.gun.rotation.x) * 50;
+        vector.y = Math.sin(this.parts.turret.rotation.y) * 50;
+        vector.z = Math.sin(this.parts.gun.rotation.z) * 50;
+
+        this.bomb = new Bomb(position, vector);
+        this.bomb.addToScene(this.scene);    
+    }
+    
 };
 
