@@ -23,7 +23,7 @@ function Bomb(position, vector) {
 Bomb.prototype.step = function(delta) {
     this.container.position.x += delta * this.vector.x;
     this.container.position.y += delta * this.vector.y;
-    this.container.position.y += delta * this.vector.z;
+    this.container.position.z += delta * this.vector.z;
     if (this.container.position.x > 1000 ||
 		this.container.position.y > 1000 ||
 		this.container.position.z > 1000) {

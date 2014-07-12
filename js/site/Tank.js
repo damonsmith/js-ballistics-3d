@@ -106,10 +106,12 @@ Tank.prototype.fire = function() {
         position.y = this.parts.gun.position.y;
         position.z = this.parts.gun.position.z;
 
+        var yComponent = Math.cos(this.parts.gun.rotation.z);
+        
         var vector = {};
-        vector.x = Math.cos(this.parts.gun.rotation.x) * 50;
-        vector.y = Math.sin(this.parts.turret.rotation.y) * 50;
-        vector.z = Math.sin(this.parts.gun.rotation.z) * 50;
+        vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * 50;
+        vector.y = Math.sin(this.parts.gun.rotation.z) * 50;
+        vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * 50;
         World.addObject(new Bomb(position, vector));
     }
 };

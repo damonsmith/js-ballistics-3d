@@ -10,7 +10,8 @@ function World() {
     this.fixedViews = {
     		top: [0,50,0],
     		far: [-20, 50, 120],
-    		near: [-10, 10, 12]
+    		near: [-10, 10, 12],
+    		side: [0, 0, 20]
     };
     
     this.camera = new THREE.PerspectiveCamera(
