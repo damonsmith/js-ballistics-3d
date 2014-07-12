@@ -25,7 +25,10 @@ Bomb.prototype.step = function(delta) {
     this.container.position.x += delta * this.vector.x;
     this.container.position.y += delta * this.vector.y;
     this.container.position.z += delta * this.vector.z;
-    
+
+    this.container.rotation.x += delta;
+    this.container.rotation.y += delta*2;
+
     this.vector.y -= delta * 9.8;
     
     if (this.container.position.x > 1000 ||
