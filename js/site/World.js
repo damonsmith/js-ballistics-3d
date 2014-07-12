@@ -7,14 +7,20 @@ function World() {
 
     this.scene = new THREE.Scene();
 
+    this.fixedViews = {
+    		top: [0,50,0],
+    		far: [-20, 50, 120],
+    		near: [-10, 10, 12]
+    };
+    
     this.camera = new THREE.PerspectiveCamera(
         40,             // Field of view
         800 / 600,      // Aspect ratio
         0.1,            // Near plane
         10000           // Far plane
     );
-    this.camera.position.set( 0, 50, 120 );
-    this.camera.lookAt( this.scene.position );
+    
+    this.setView("far");
     
     this.objects = [];
     
@@ -61,6 +67,12 @@ World.prototype.removeObject = function(object) {
         this.objects.splice(index, 1);
         this.scene.remove(object.container);
     }
+};
+
+World.prototype.setView = function(name) {
+	var view = this.fixedViews[name];
+	this.camera.position.set( view[0], view[1], view[2] );
+	this.camera.lookAt( this.scene.position );
 };
 
 //Global functions:
