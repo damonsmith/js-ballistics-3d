@@ -80,7 +80,6 @@ function Tank() {
 
 }
 
-
 Tank.prototype.step = function(delta) {
     if (this.keys.up) {
         this.parts.gun.rotation.z += delta;
@@ -99,11 +98,6 @@ Tank.prototype.step = function(delta) {
     }
 }
 
-Tank.prototype.addToScene = function(scene) {
-    scene.add(this.container);
-    this.scene = scene;
-};
-
 Tank.prototype.fire = function() {
     if (!this.bomb) {
 
@@ -116,10 +110,7 @@ Tank.prototype.fire = function() {
         vector.x = Math.cos(this.parts.gun.rotation.x) * 50;
         vector.y = Math.sin(this.parts.turret.rotation.y) * 50;
         vector.z = Math.sin(this.parts.gun.rotation.z) * 50;
-
-        this.bomb = new Bomb(position, vector);
-        this.bomb.addToScene(this.scene);    
+        World.addObject(new Bomb(position, vector));
     }
-    
 };
 

@@ -1,5 +1,7 @@
 function Bomb(position, vector) {
 
+	this.worldSize = 1000;
+	
     this.vector = vector;
 
     var material = new THREE.MeshLambertMaterial( { color: 0xFF0000 } );
@@ -22,6 +24,12 @@ Bomb.prototype.step = function(delta) {
     this.container.position.x += delta * this.vector.x;
     this.container.position.y += delta * this.vector.y;
     this.container.position.y += delta * this.vector.z;
+    if (this.container.position.x > 1000 ||
+		this.container.position.y > 1000 ||
+		this.container.position.z > 1000) {
+    	
+    	World.removeObject(this);
+    }
 };
 
 Bomb.prototype.addToScene = function(scene) {
