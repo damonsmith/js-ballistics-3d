@@ -89,7 +89,8 @@
         }
         surfaceGeometry.computeFaceNormals();
         surfaceGeometry.computeVertexNormals();
-        var material = new THREE.MeshLambertMaterial({color:0x63605a});
+        var material = new THREE.MeshPhongMaterial( { ambient: 0x403030, color: 0xdddddd, specular: 0x262320, shininess: 5, shading: THREE.SmoothShading });
+//        var material = new THREE.MeshLambertMaterial({color:0x63605a});
         var mesh = new THREE.Mesh( surfaceGeometry, material );
         mesh.position.x = -(this.xpoints/2);
         mesh.position.z = -(this.ypoints/2);

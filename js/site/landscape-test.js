@@ -20,7 +20,7 @@
             0.1,            // Near plane
             10000           // Far plane
         );
-        camera.position.set( 0, -500,0 );
+        camera.position.set( 0, 10, -500 );
         camera.lookAt( scene.position );
 
         var combined = new THREE.Object3D();
@@ -28,23 +28,30 @@
         scene.add( combined );
 
         var light = new THREE.PointLight( 0xFFFFFF );
-        light.position.set( 10, -700, 10 );
+        light.position.set( 200, 700, 0 );
         scene.add( light );
 
         var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
         scene.add( ambient );
 
+        var controls = new THREE.FirstPersonControls( camera, renderer.domElement );
+
+        controls.movementSpeed = 70;
+        controls.lookSpeed = 0.05;
+        controls.noFly = true;
+        controls.lookVertical = false;
 
         var clock = new THREE.Clock;
 
         function render() {
             renderer.render(scene, camera);
+            controls.update(clock.getDelta());
             requestAnimationFrame(render);
         }
 
         render();
 
-        setupMouseListeners(renderer.domElement, combined)
+        //setupMouseListeners(renderer.domElement, combined)
 
     };
 
