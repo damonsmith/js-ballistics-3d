@@ -17,6 +17,7 @@ function Bomb(position, vector) {
     this.container.position.x = position.x + 2;
     this.container.position.y = position.y + 4;
     this.container.position.z = position.z;
+    
 }
 
 
@@ -24,12 +25,16 @@ Bomb.prototype.step = function(delta) {
     this.container.position.x += delta * this.vector.x;
     this.container.position.y += delta * this.vector.y;
     this.container.position.z += delta * this.vector.z;
+    
+    this.vector.y -= delta * 9.8;
+    
     if (this.container.position.x > 1000 ||
 		this.container.position.y > 1000 ||
 		this.container.position.z > 1000) {
     	
     	World.removeObject(this);
     }
+    
 };
 
 Bomb.prototype.addToScene = function(scene) {
