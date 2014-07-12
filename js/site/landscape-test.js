@@ -38,9 +38,6 @@
         var clock = new THREE.Clock;
 
         function render() {
-//            combined.rotation.y -= clock.getDelta();
-//            combined.rotation.x = 0;
-//            combined.rotation.z = 0;
             renderer.render(scene, camera);
             requestAnimationFrame(render);
         }
