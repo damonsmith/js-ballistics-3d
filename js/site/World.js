@@ -40,7 +40,8 @@ function World() {
     }
     
     this.addObject(new Tank());
-    
+    this.scene.updateMatrixWorld(true);
+
     window.setTimeout(this.renderFunction, 1);
 }
 

@@ -1,6 +1,7 @@
 function Tank() {
 
     var material = new THREE.MeshLambertMaterial( { color: 0xFF0000 } );
+    var gunTipMaterial = new THREE.MeshLambertMaterial( { color: 0x404040 } );
 
     this.parts = {};
     this.parts.base = new THREE.Object3D();
@@ -17,10 +18,20 @@ function Tank() {
     this.parts.gun = new THREE.Object3D();
     var gunBox = new THREE.BoxGeometry( 4, 0.4, 0.4 );
     var mesh = new THREE.Mesh( gunBox, material );
+    this.parts.gunMesh = mesh;
     this.parts.gun.add(mesh);
 
     mesh.applyMatrix( new THREE.Matrix4().makeTranslation(2, 0, 0) );
 
+    this.parts.gunTip = new THREE.Object3D();
+    var gunTipBox = new THREE.BoxGeometry(0.1,0.4,0.4);
+    var gunTipMesh = new THREE.Mesh(gunTipBox, gunTipMaterial);
+    this.parts.gunTipMesh = gunTipMesh;
+    this.parts.gunTip.add(gunTipMesh);
+    gunTipMesh.applyMatrix(new THREE.Matrix4().makeTranslation(4,0,0));
+
+
+    this.parts.gun.add(this.parts.gunTip);
     this.parts.turret.add(this.parts.gun);
 
     this.parts.leftTrack = new THREE.Object3D();
@@ -100,12 +111,9 @@ Tank.prototype.step = function(delta) {
 
 Tank.prototype.fire = function() {
     if (!this.bomb) {
-
-        var position = {};
-        position.x = this.parts.gun.position.x;
-        position.y = this.parts.gun.position.y;
-        position.z = this.parts.gun.position.z;
-
+        var position = new THREE.Vector3();
+        this.parts.gunTipMesh.parent.updateMatrixWorld();
+        position.setFromMatrixPosition( this.parts.gunTipMesh.matrixWorld );
         var yComponent = Math.cos(this.parts.gun.rotation.z);
         var velocity = 9.8;
         var vector = {};

@@ -14,8 +14,8 @@ function Bomb(position, vector) {
 
     this.container = new THREE.Object3D();
     this.container.add(this.parts.body);
-    this.container.position.x = position.x + 2;
-    this.container.position.y = position.y + 4;
+    this.container.position.x = position.x;
+    this.container.position.y = position.y;
     this.container.position.z = position.z;
     
 }
