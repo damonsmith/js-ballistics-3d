@@ -1,5 +1,7 @@
-function Tank() {
+function Tank(xPos, zPos, landscape) {
 
+	this.landscape = landscape;
+	
     var material = new THREE.MeshLambertMaterial( { color: 0xFF0000 } );
     var gunTipMaterial = new THREE.MeshLambertMaterial( { color: 0x404040 } );
 
@@ -54,54 +56,24 @@ function Tank() {
     this.container.add(this.parts.leftTrack);
     this.container.add(this.parts.rightTrack);
 
-    this.keys = {};
-    var self = this;
-    window.addEventListener("keydown", function(event) {
-        if (event.keyCode == 40) {
-            self.keys.down = true;
-        }
-        else if (event.keyCode == 38) {
-            self.keys.up = true;
-        }
-        else if (event.keyCode == 37) {
-            self.keys.left = true;
-        }
-        else if (event.keyCode == 39) {
-            self.keys.right = true;
-        }
-    });
-
-    window.addEventListener("keyup", function(event) {
-        if (event.keyCode == 40) {
-            self.keys.down = false;
-        }
-        else if (event.keyCode == 38) {
-            self.keys.up = false;
-        }
-        else if (event.keyCode == 37) {
-            self.keys.left = false;
-        }
-        else if (event.keyCode == 39) {
-            self.keys.right = false;
-        }
-        else if (event.keyCode == 70) {
-            self.fire();
-        }
-    });
-
+    this.container.position.x = xPos;
+    this.container.position.z = zPos;
+    this.container.position.y = this.landscape.getAltitude(xPos, zPos);
+    
+    this.actions = {};
 }
 
 Tank.prototype.step = function(delta) {
-    if (this.keys.up) {
+    if (this.actions.up) {
         this.parts.gun.rotation.z += delta;
     }
-    if (this.keys.down) {
+    if (this.actions.down) {
         this.parts.gun.rotation.z -= delta;
     }
-    if (this.keys.left) {
+    if (this.actions.left) {
         this.parts.turret.rotation.y += delta;
     }
-    if (this.keys.right) {
+    if (this.actions.right) {
         this.parts.turret.rotation.y -= delta;
     }
     if (this.bomb) {

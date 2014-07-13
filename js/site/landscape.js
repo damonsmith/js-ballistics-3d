@@ -97,4 +97,9 @@
         mesh.position.y = 0;
         return mesh;
     }
+    
+    window.game.scenery.Landscape.prototype.getAltitude = function(x, y) {
+        return this.points[x][y];
+    }
+    
 })(window, THREE);

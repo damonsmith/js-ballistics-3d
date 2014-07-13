@@ -7,21 +7,12 @@ function World() {
 
     this.scene = new THREE.Scene();
 
-    this.fixedViews = {
-    		top: [0,50,0],
-    		far: [-20, 50, 120],
-    		near: [-10, 10, 12],
-    		side: [0, 0, 20]
-    };
-    
     this.camera = new THREE.PerspectiveCamera(
         40,             // Field of view
         800 / 600,      // Aspect ratio
         0.1,            // Near plane
         10000           // Far plane
     );
-    
-    this.setView("far");
     
     this.objects = [];
     
@@ -39,8 +30,22 @@ function World() {
     	self.render();
     }
     
-    this.addObject(new Tank());
+    this.landscape = new game.scenery.Landscape();
+    console.log("Now terraforming.. ");
+    this.landscape.terraform();
+    console.log(".. terraforming done. ");
+    
+    var landscapeModel = new THREE.Object3D();
+    landscapeModel.add(this.landscape.getMesh());
+    this.scene.add( landscapeModel );
+    
+    var tank = new Tank(10, 200, this.landscape);
+    this.addObject(tank);
     this.scene.updateMatrixWorld(true);
+    
+    this.controls = new Controls(this.camera, this.renderer.domElement);
+    this.controls.selectUnit(tank);
+    
 
     window.setTimeout(this.renderFunction, 1);
 }
@@ -51,6 +56,8 @@ World.prototype.render = function() {
     for (i=0; i<this.objects.length; i++) {
     	this.objects[i].step(delta);
     }
+    
+    this.controls.step(delta);
 
     this.renderer.render(this.scene, this.camera);
 
@@ -69,12 +76,6 @@ World.prototype.removeObject = function(object) {
         this.objects.splice(index, 1);
         this.scene.remove(object.container);
     }
-};
-
-World.prototype.setView = function(name) {
-	var view = this.fixedViews[name];
-	this.camera.position.set( view[0], view[1], view[2] );
-	this.camera.lookAt( this.scene.position );
 };
 
 //Global functions:

@@ -5,18 +5,23 @@
     <link rel="stylesheet" href="./css/game.css"/>
     <script src="./js/vendor/jquery-1.11.0.min.js"></script>
     <script src="./js/vendor/three.js"></script>
+    <script src="./js/vendor/three.firstpersoncontrols.js"></script>
     <script src="./js/site/World.js"></script>
     <script src="./js/site/Tank.js"></script>
     <script src="./js/site/Bomb.js"></script>
+    <script src="./js/site/landscape.js"></script>
+    <script src="./js/site/Controls.js"></script>
+    
     <script>
     	World.create();
     </script>
 </head>
 <body>
 <div id="container"></div>
-<button onclick="world.setView('top')">Top view</button>
-<button onclick="world.setView('far')">Far view</button>
-<button onclick="world.setView('near')">Close view</button>
-<button onclick="world.setView('side')">Side view</button>
+<button onclick="world.controls.setView('top')">Top view</button>
+<button onclick="world.controls.setView('far')">Far view</button>
+<button onclick="world.controls.setView('near')">Close view</button>
+<button onclick="world.controls.setView('side')">Side view</button>
+<button onclick="world.controls.setView('map')">Map view</button>
 </body>
 </html>
