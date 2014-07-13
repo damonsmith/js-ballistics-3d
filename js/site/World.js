@@ -2,22 +2,11 @@ function World(audioMixer) {
     this.audioMixer = audioMixer;
 	this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
+	
 	this.renderer.setSize( 800, 600 );
     $('#container').append( this.renderer.domElement );
 
     this.scene = new THREE.Scene();
-
-    this.fixedViews = {
-    		top: [0,50,0],
-    		far: [-20, 50, 120],
-    		near: [-10, 10, 12],
-    		side: [0, 0, 20]
-    };
-
-    var landscape = new game.scenery.Landscape();
-    console.log("Now terraforming.. ");
-    landscape.terraform();
-    console.log(".. terraforming done. ");
 
     this.camera = new THREE.PerspectiveCamera(
         40,             // Field of view
@@ -26,29 +15,38 @@ function World(audioMixer) {
         10000           // Far plane
     );
     
-    this.setView("far");
-    
     this.objects = [];
-
-    /* first there was land */
-    this.scene.add(landscape.getMesh());
-
-    /* let there be light */
+    
     var light = new THREE.PointLight( 0xFFFFFF );
     light.position.set( 10, 7, 10 );
+    
     this.scene.add( light );
 
     var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
     this.scene.add( ambient );
-
+    
     //Wrap the render function so that it is called as a method when it is used in requestAnimationFrame:
     var self = this;
     this.renderFunction = function() {
     	self.render();
     }
     
-    this.addObject(new Tank(audioMixer));
+    this.landscape = new game.scenery.Landscape();
+    console.log("Now terraforming.. ");
+    this.landscape.terraform();
+    console.log(".. terraforming done. ");
+    
+    var landscapeModel = new THREE.Object3D();
+    landscapeModel.add(this.landscape.getMesh());
+    this.scene.add( landscapeModel );
+    
+    var tank = new Tank(10, 200, this.landscape, audioMixer);
+    this.addObject(tank);
     this.scene.updateMatrixWorld(true);
+    
+    this.controls = new Controls(this.camera, this.renderer.domElement);
+    this.controls.selectUnit(tank);
+    
 
     window.setTimeout(this.renderFunction, 1);
 }
@@ -59,6 +57,8 @@ World.prototype.render = function() {
     for (var i=0; i<this.objects.length; i++) {
     	this.objects[i].step(delta);
     }
+    
+    this.controls.step(delta);
 
     this.renderer.render(this.scene, this.camera);
 
@@ -77,12 +77,6 @@ World.prototype.removeObject = function(object) {
         this.objects.splice(index, 1);
         this.scene.remove(object.container);
     }
-};
-
-World.prototype.setView = function(name) {
-	var view = this.fixedViews[name];
-	this.camera.position.set( view[0], view[1], view[2] );
-	this.camera.lookAt( this.scene.position );
 };
 
 //Global functions:
