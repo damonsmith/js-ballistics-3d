@@ -98,8 +98,8 @@
         return mesh;
     }
     
-    window.game.scenery.Landscape.prototype.getAltitude = function(x, y) {
-        return this.points[x][y];
+    window.game.scenery.Landscape.prototype.getAltitude = function(x, z) {
+        return this.points[x][z];
     }
     
 })(window, THREE);
