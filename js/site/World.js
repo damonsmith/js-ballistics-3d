@@ -1,7 +1,7 @@
-function World() {
+function World(audioMixer) {
+    this.audioMixer = audioMixer;
 	this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
-	
 	this.renderer.setSize( 800, 600 );
     $('#container').append( this.renderer.domElement );
 
@@ -13,7 +13,12 @@ function World() {
     		near: [-10, 10, 12],
     		side: [0, 0, 20]
     };
-    
+
+    var landscape = new game.scenery.Landscape();
+    console.log("Now terraforming.. ");
+    landscape.terraform();
+    console.log(".. terraforming done. ");
+
     this.camera = new THREE.PerspectiveCamera(
         40,             // Field of view
         800 / 600,      // Aspect ratio
@@ -24,22 +29,25 @@ function World() {
     this.setView("far");
     
     this.objects = [];
-    
+
+    /* first there was land */
+    this.scene.add(landscape.getMesh());
+
+    /* let there be light */
     var light = new THREE.PointLight( 0xFFFFFF );
     light.position.set( 10, 7, 10 );
-    
     this.scene.add( light );
 
     var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
     this.scene.add( ambient );
-    
+
     //Wrap the render function so that it is called as a method when it is used in requestAnimationFrame:
     var self = this;
     this.renderFunction = function() {
     	self.render();
     }
     
-    this.addObject(new Tank());
+    this.addObject(new Tank(audioMixer));
     this.scene.updateMatrixWorld(true);
 
     window.setTimeout(this.renderFunction, 1);
@@ -48,7 +56,7 @@ function World() {
 World.prototype.render = function() {
     var delta = this.clock.getDelta();
 
-    for (i=0; i<this.objects.length; i++) {
+    for (var i=0; i<this.objects.length; i++) {
     	this.objects[i].step(delta);
     }
 
@@ -78,9 +86,9 @@ World.prototype.setView = function(name) {
 };
 
 //Global functions:
-World.create = function() {
+World.create = function(audioMixer) {
 	window.addEventListener("load", function() {
-		window.world = new World();
+		window.world = new World(audioMixer);
 	});
 };
 
