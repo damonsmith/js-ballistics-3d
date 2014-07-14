@@ -17,7 +17,7 @@
     
     <script>
         (function() {
-            var mixer = new jssynth_core.Mixer({ numChannels: 8, volume: 64} /* global params */, { volume: 64 } /* default channel params */);
+            var mixer = new jssynth_core.Mixer({ numChannels: 4, volume: 64} /* global params */, { volume: 128 } /* default channel params */);
             var audioOut = new jssynth_core.WebAudioOutput(mixer);
             audioOut.start();
             World.create(mixer);

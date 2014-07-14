@@ -61,7 +61,7 @@ function Tank(xPos, zPos, landscape, audioMixer) {
 
     this.container.position.x = xPos;
     this.container.position.z = zPos;
-    this.container.position.y = this.landscape.getAltitude(xPos, zPos);
+    this.container.position.y = 1+this.landscape.getAltitude(xPos, zPos);
     
     this.actions = {};
 }
