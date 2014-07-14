@@ -46,6 +46,7 @@ function World() {
     this.controls = new Controls(this.camera, this.renderer.domElement);
     this.controls.selectUnit(tank);
     
+    this.scene.add(this.controls.getObject());
 
     window.setTimeout(this.renderFunction, 1);
 }
