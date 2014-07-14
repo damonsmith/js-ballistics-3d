@@ -15,12 +15,12 @@
         console.log(".. terraforming done. ");
 
         var camera = new THREE.PerspectiveCamera(
-            40,             // Field of view
+            80,             // Field of view
             800 / 600,      // Aspect ratio
             0.1,            // Near plane
             10000           // Far plane
         );
-        camera.position.set( 0, 10, -500 );
+        camera.position.set( 0, 2, -500 );
         camera.lookAt( scene.position );
 
         var combined = new THREE.Object3D();

@@ -1,4 +1,7 @@
-function Tank(xPos, zPos, landscape) {
+function Tank(xPos, zPos, landscape, audioMixer) {
+    this.audioMixer = audioMixer;
+
+    this.fireSample = window['assets/samples/tank-fire-mono-s16-44100.raw'];
 
 	this.landscape = landscape;
 	
@@ -87,12 +90,14 @@ Tank.prototype.fire = function() {
         this.parts.gunTipMesh.parent.updateMatrixWorld();
         position.setFromMatrixPosition( this.parts.gunTipMesh.matrixWorld );
         var yComponent = Math.cos(this.parts.gun.rotation.z);
-        var velocity = 9.8;
+        var velocity = 30;
+//        var velocity = 9.8;
         var vector = {};
         vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * velocity;
         vector.y = Math.sin(this.parts.gun.rotation.z) * velocity;
         vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * velocity;
-        World.addObject(new Bomb(position, vector));
+        World.addObject(new Bomb(position, vector, this.audioMixer));
+        this.audioMixer.triggerSample(0, this.fireSample, 44100);
     }
 };
 

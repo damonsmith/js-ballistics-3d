@@ -1,4 +1,5 @@
-function World() {
+function World(audioMixer) {
+    this.audioMixer = audioMixer;
 	this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
 	
@@ -39,7 +40,7 @@ function World() {
     landscapeModel.add(this.landscape.getMesh());
     this.scene.add( landscapeModel );
     
-    var tank = new Tank(10, 200, this.landscape);
+    var tank = new Tank(10, 200, this.landscape, audioMixer);
     this.addObject(tank);
     this.scene.updateMatrixWorld(true);
     
@@ -54,7 +55,7 @@ function World() {
 World.prototype.render = function() {
     var delta = this.clock.getDelta();
 
-    for (i=0; i<this.objects.length; i++) {
+    for (var i=0; i<this.objects.length; i++) {
     	this.objects[i].step(delta);
     }
     
@@ -80,9 +81,9 @@ World.prototype.removeObject = function(object) {
 };
 
 //Global functions:
-World.create = function() {
+World.create = function(audioMixer) {
 	window.addEventListener("load", function() {
-		window.world = new World();
+		window.world = new World(audioMixer);
 	});
 };
 

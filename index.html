@@ -5,15 +5,23 @@
     <link rel="stylesheet" href="./css/game.css"/>
     <script src="./js/vendor/jquery-1.11.0.min.js"></script>
     <script src="./js/vendor/three.js"></script>
+    <script src="./js/vendor/jssynth_core.js"></script>
+    <script src="./audio/tankFire.js"></script>
+    <script src="./audio/explosion.js"></script>
+    <script src="./js/site/landscape.js"></script>
     <script src="./js/vendor/three.firstpersoncontrols.js"></script>
     <script src="./js/site/World.js"></script>
     <script src="./js/site/Tank.js"></script>
     <script src="./js/site/Bomb.js"></script>
-    <script src="./js/site/landscape.js"></script>
     <script src="./js/site/Controls.js"></script>
     
     <script>
-    	World.create();
+        (function() {
+            var mixer = new jssynth_core.Mixer({ numChannels: 8, volume: 64} /* global params */, { volume: 64 } /* default channel params */);
+            var audioOut = new jssynth_core.WebAudioOutput(mixer);
+            audioOut.start();
+            World.create(mixer);
+        })();
     </script>
 </head>
 <body>
