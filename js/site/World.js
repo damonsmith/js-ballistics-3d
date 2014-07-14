@@ -17,12 +17,19 @@ function World(audioMixer) {
     
     this.objects = [];
     
-    var light = new THREE.PointLight( 0xFFFFFF );
+    var light = new THREE.PointLight( 0xf0e0d0);
     light.position.set( 10, 700, -300 );
     
     this.scene.add( light );
 
-    var ambient = new THREE.AmbientLight( 0x404040 ); // soft white light
+
+//    var light = new THREE.PointLight( 0x808080 );
+    var light = new THREE.PointLight( 0x403040 );
+    light.position.set( -10, 100, 500 );
+    this.scene.add( light );
+
+
+    var ambient = new THREE.AmbientLight( 0x202020 ); // soft white light
     this.scene.add( ambient );
     
     //Wrap the render function so that it is called as a method when it is used in requestAnimationFrame:
