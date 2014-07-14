@@ -3,16 +3,15 @@ function Controls(camera, canvas) {
 
 	this.camera = camera;
 	this.canvas = canvas;
-	
-	//Set up pointerlock so that the mouse cursor is locked inside 
-	//the canvas while you are clicking to look around.
-	this.canvas.requestPointerLock = canvas.requestPointerLock ||
-	this.canvas.mozRequestPointerLock ||
-	this.canvas.webkitRequestPointerLock;
-	
-	document.exitPointerLock = document.exitPointerLock ||
-    document.mozExitPointerLock ||
-    document.webkitExitPointerLock;
+
+	// Set up pointerlock so that the mouse cursor is locked inside
+	// the canvas while you are clicking to look around.
+	this.canvas.requestPointerLock = canvas.requestPointerLock
+			|| this.canvas.mozRequestPointerLock
+			|| this.canvas.webkitRequestPointerLock;
+
+	document.exitPointerLock = document.exitPointerLock
+			|| document.mozExitPointerLock || document.webkitExitPointerLock;
 
 	this.PI_2 = Math.PI / 2;
 	this.fixedViews = {
@@ -28,7 +27,7 @@ function Controls(camera, canvas) {
 	this.moveLeft = false;
 	this.moveRight = false;
 	this.moveUp = false;
-	
+
 	var self = this;
 	window.addEventListener("keydown", function(event) {
 		self.handleKeyDown(event);
@@ -49,7 +48,7 @@ function Controls(camera, canvas) {
 	this.yawObject.position.x = 0;
 	this.yawObject.position.z = 0;
 	this.yawObject.add(this.pitchObject);
-	
+
 	this.velocity = new THREE.Vector3();
 
 	this.canvas.addEventListener('mousemove', function(e) {
@@ -64,7 +63,7 @@ function Controls(camera, canvas) {
 	this.canvas.addEventListener('mouseout', function(e) {
 		self.mouseDown = false;
 	}, false);
-	
+
 }
 
 Controls.prototype.getObject = function() {
@@ -75,7 +74,7 @@ Controls.prototype.step = function(delta) {
 	this.velocity.x -= this.velocity.x * 10.0 * delta;
 	this.velocity.z -= this.velocity.z * 10.0 * delta;
 
-	//this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+	// this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
 	if (this.moveForward)
 		this.velocity.z -= 400.0 * delta;
@@ -92,7 +91,7 @@ Controls.prototype.step = function(delta) {
 
 	this.yawObject.translateX(this.velocity.x * delta);
 	this.yawObject.translateZ(this.velocity.z * delta);
-	
+
 };
 
 Controls.prototype.unselectUnit = function() {
@@ -108,11 +107,6 @@ Controls.prototype.stop = function(unit) {
 	this.selectedUnit.actions = {};
 };
 
-Controls.prototype.rotateCamera = function(x, y) {
-	this.camera.rotation.y -= x / 500;
-	this.camera.rotation.x -= y / 500;
-};
-
 Controls.prototype.setView = function(name) {
 	var view = this.fixedViews[name];
 	if (this.selectedUnit) {
@@ -122,8 +116,23 @@ Controls.prototype.setView = function(name) {
 	} else {
 		this.yawObject.position.set(view[0], view[1], view[2]);
 	}
+	this.lookAt(this.selectedUnit.container);
 };
 
+Controls.prototype.lookAt = function(object) {
+	var dx = this.yawObject.position.x - object.position.x;
+	var dy = object.position.y - this.yawObject.position.y;
+	var dz = this.yawObject.position.z - object.position.z;
+	
+	if (dx === 0) {
+		dx = 0.001;
+	}
+	var yawLength = Math.sqrt((dz*dz) + (dx*dx));
+	var newYaw = Math.atan(dx/dz);
+	var newPitch = Math.atan(dy/yawLength);
+	this.yawObject.rotation.y = newYaw;
+	this.pitchObject.rotation.x = newPitch;
+};
 
 Controls.prototype.handleMouseDown = function(event) {
 	this.mouseDown = true;
@@ -148,10 +157,9 @@ Controls.prototype.handleMouseMove = function(event) {
 	this.yawObject.rotation.y -= movementX * 0.002;
 	this.pitchObject.rotation.x -= movementY * 0.002;
 
-	this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
-			this.pitchObject.rotation.x));
+//	this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
+//			this.pitchObject.rotation.x));
 
-	event.preventDefault();
 };
 
 Controls.prototype.handleKeyDown = function(event) {
@@ -164,7 +172,7 @@ Controls.prototype.handleKeyDown = function(event) {
 			this.selectedUnit.actions.left = true;
 		} else if (event.keyCode == 39) {
 			this.selectedUnit.actions.right = true;
-		} 
+		}
 	}
 	if (event.keyCode == 87) {
 		this.moveForward = true;
@@ -180,7 +188,6 @@ Controls.prototype.handleKeyDown = function(event) {
 		this.moveDown = true;
 	}
 };
-
 
 Controls.prototype.handleKeyUp = function(event) {
 	if (this.selectedUnit) {
@@ -210,5 +217,3 @@ Controls.prototype.handleKeyUp = function(event) {
 		this.moveDown = false;
 	}
 };
-
-

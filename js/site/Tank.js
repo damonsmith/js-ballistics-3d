@@ -61,7 +61,7 @@ function Tank(xPos, zPos, landscape, audioMixer) {
 
     this.container.position.x = xPos;
     this.container.position.z = zPos;
-    this.container.position.y = this.landscape.getAltitude(xPos, zPos);
+    this.container.position.y = this.landscape.getAltitude(xPos, zPos) + 2;
     
     this.actions = {};
 }
@@ -97,7 +97,7 @@ Tank.prototype.fire = function() {
         vector.y = Math.sin(this.parts.gun.rotation.z) * velocity;
         vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * velocity;
         World.addObject(new Bomb(position, vector, this.audioMixer));
-        this.audioMixer.triggerSample(0, this.fireSample, 44100);
+        this.audioMixer.triggerSample(0, this.fireSample, 44100);        	
     }
 };
 

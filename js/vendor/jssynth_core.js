@@ -226,10 +226,15 @@
      * @param freqHz frequency (absolute) to play the sample at
      */
     jssynth.Mixer.prototype.triggerSample = function(channel, sample, freqHz) {
-        this.channelState[channel].sample = sample;
-        this.channelState[channel].playbackFreqHz = freqHz;
-        this.channelState[channel].samplePosition = 0;
-        this.channelState[channel].volume = sample.metadata.volume;
+    	if (!sample) {
+    		console.warn("audio sample not found.");
+    	}
+    	else {
+    		this.channelState[channel].sample = sample;
+            this.channelState[channel].playbackFreqHz = freqHz;
+            this.channelState[channel].samplePosition = 0;
+            this.channelState[channel].volume = sample.metadata.volume;	
+    	}
     };
 
     jssynth.Mixer.prototype.enableChannels = function(channels) {

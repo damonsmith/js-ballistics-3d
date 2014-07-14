@@ -12,7 +12,7 @@
         this.xpoints = dimension;
         this.ypoints = dimension;
         this.points = this.initialisePoints();
-    }
+    };
 
     window.game.scenery.Landscape.prototype.initialisePoints = function() {
         var result = new Array(this.xpoints);
@@ -28,12 +28,12 @@
         result[this.xpoints-1][0]=DEFAULT_CORNER_HEIGHT;
         result[this.xpoints-1][this.ypoints-1]=DEFAULT_CORNER_HEIGHT;
         return result;
-    }
+    };
 
 
     window.game.scenery.Landscape.prototype.terraform = function() {
         this.diamondSquare(0,0,this.xpoints,this.ypoints,START_VARIANCE,Math.floor(this.xpoints / 2));
-    }
+    };
 
     window.game.scenery.Landscape.prototype.diamondSquare = function(x1,y1,x2,y2,variance,level) {
         var a, b, c, d, e, f, g, i, j, l2 = Math.floor(level/2);
@@ -65,7 +65,7 @@
         }
 
         this.diamondSquare(x1, y1, x2, y2, variance / 2, l2);
-    }
+    };
 
     window.game.scenery.Landscape.prototype.getMesh = function() {
         /* landscape gets built on the XZ plane, with Y corresponding to height */
@@ -92,14 +92,14 @@
         var material = new THREE.MeshPhongMaterial( { ambient: 0x403030, color: 0xdddddd, specular: 0x262320, shininess: 5, shading: THREE.SmoothShading });
 //        var material = new THREE.MeshLambertMaterial({color:0x63605a});
         var mesh = new THREE.Mesh( surfaceGeometry, material );
-        mesh.position.x = -(this.xpoints/2);
-        mesh.position.z = -(this.ypoints/2);
+        mesh.position.x = 0;
+        mesh.position.z = 0;
         mesh.position.y = 0;
         return mesh;
-    }
+    };
     
     window.game.scenery.Landscape.prototype.getAltitude = function(x, z) {
         return this.points[x][z];
-    }
+    };
     
 })(window, THREE);
