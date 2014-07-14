@@ -65,7 +65,7 @@
         }
 
         this.diamondSquare(x1, y1, x2, y2, variance / 2, l2);
-    }
+    };
 
     window.game.scenery.Landscape.prototype.getMesh = function() {
         /* landscape gets built on the XZ plane, with Y corresponding to height */
@@ -96,7 +96,7 @@
 //        mesh.position.z = -(this.ypoints/2);
         mesh.position.y = 0;
         return mesh;
-    }
+    };
     
     window.game.scenery.Landscape.prototype.getAltitude = function(x, z) {
         var altitude = this.points[Math.floor(x + (this.xpoints /2))][Math.floor(z + (this.ypoints / 2))];
