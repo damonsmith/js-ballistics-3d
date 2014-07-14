@@ -3,14 +3,14 @@ function World(audioMixer) {
 	this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
 	
-	this.renderer.setSize( 800, 600 );
+	this.renderer.setSize( 1024, 600 );
     $('#container').append( this.renderer.domElement );
 
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.PerspectiveCamera(
-        40,             // Field of view
-        800 / 600,      // Aspect ratio
+        70,             // Field of view
+        1024 / 600,      // Aspect ratio
         0.1,            // Near plane
         10000           // Far plane
     );
@@ -18,7 +18,7 @@ function World(audioMixer) {
     this.objects = [];
     
     var light = new THREE.PointLight( 0xFFFFFF );
-    light.position.set( 10, 7, 10 );
+    light.position.set( 10, 700, -300 );
     
     this.scene.add( light );
 
