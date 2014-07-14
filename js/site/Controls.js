@@ -3,6 +3,17 @@ function Controls(camera, canvas) {
 
 	this.camera = camera;
 	this.canvas = canvas;
+	
+	//Set up pointerlock so that the mouse cursor is locked inside 
+	//the canvas while you are clicking to look around.
+	this.canvas.requestPointerLock = canvas.requestPointerLock ||
+	this.canvas.mozRequestPointerLock ||
+	this.canvas.webkitRequestPointerLock;
+	
+	document.exitPointerLock = document.exitPointerLock ||
+    document.mozExitPointerLock ||
+    document.webkitExitPointerLock;
+
 	this.PI_2 = Math.PI / 2;
 	this.fixedViews = {
 		top : [ 0, 50, 0 ],
@@ -45,10 +56,10 @@ function Controls(camera, canvas) {
 		self.handleMouseMove(e);
 	}, false);
 	this.canvas.addEventListener('mousedown', function(e) {
-		self.mouseDown = true;
+		self.handleMouseDown(e);
 	}, false);
 	this.canvas.addEventListener('mouseup', function(e) {
-		self.mouseDown = false;
+		self.handleMouseUp(e);
 	}, false);
 	this.canvas.addEventListener('mouseout', function(e) {
 		self.mouseDown = false;
@@ -113,6 +124,16 @@ Controls.prototype.setView = function(name) {
 	}
 };
 
+
+Controls.prototype.handleMouseDown = function(event) {
+	this.mouseDown = true;
+	this.canvas.requestPointerLock();
+};
+
+Controls.prototype.handleMouseUp = function(event) {
+	this.mouseDown = false;
+	document.exitPointerLock();
+};
 
 Controls.prototype.handleMouseMove = function(event) {
 	if (!this.mouseDown) {
