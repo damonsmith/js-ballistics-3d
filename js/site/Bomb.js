@@ -1,4 +1,4 @@
-function Bomb(position, vector, audioMixer) {
+function Bomb(position, vector, landscape, audioMixer) {
 
 	this.worldSize = 1000;
 	
@@ -18,6 +18,7 @@ function Bomb(position, vector, audioMixer) {
     this.container.position.y = position.y;
     this.container.position.z = position.z;
     this.audioMixer = audioMixer;
+    this.landscape = landscape;
     
 }
 
@@ -31,10 +32,14 @@ Bomb.prototype.step = function(delta) {
     this.container.rotation.y += delta*2;
 
     this.vector.y -= delta * 9.8;
-    
-    if (this.container.position.x > 1000 ||
-		this.container.position.y <0 || this.container.position.y > 1000 ||
-		this.container.position.z > 1000) {
+
+    var x= this.container.position.x;
+    var y = this.container.position.y;
+    var z = this.container.position.z;
+    if ( (y < this.landscape.getAltitude(x, z)) || y > 1000
+        || x > 1000 || x < 0
+		|| z > 1000 || z < 0
+       ) {
     	
     	World.removeObject(this);
         this.audioMixer.triggerSample(1, window['assets/samples/explosion-mono-s16-44100.raw'], 44100);

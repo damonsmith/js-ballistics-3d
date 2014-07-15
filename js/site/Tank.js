@@ -90,13 +90,13 @@ Tank.prototype.fire = function() {
         this.parts.gunTipMesh.parent.updateMatrixWorld();
         position.setFromMatrixPosition( this.parts.gunTipMesh.matrixWorld );
         var yComponent = Math.cos(this.parts.gun.rotation.z);
-        var velocity = 30;
+        var velocity = 40;
 //        var velocity = 9.8;
         var vector = {};
         vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * velocity;
         vector.y = Math.sin(this.parts.gun.rotation.z) * velocity;
         vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * velocity;
-        World.addObject(new Bomb(position, vector, this.audioMixer));
+        World.addObject(new Bomb(position, vector, this.landscape, this.audioMixer));
         this.audioMixer.triggerSample(0, this.fireSample, 44100);
     }
 };
