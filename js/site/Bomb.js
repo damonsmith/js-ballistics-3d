@@ -37,8 +37,8 @@ Bomb.prototype.step = function(delta) {
     var y = this.container.position.y;
     var z = this.container.position.z;
     if ( (y < this.landscape.getAltitude(x, z)) || y > 1000
-        || x > 1000 || x < 0
-		|| z > 1000 || z < 0
+        || x > 1000 || x < -1000
+		|| z > 1000 || z < -1000
        ) {
     	
     	World.removeObject(this);
