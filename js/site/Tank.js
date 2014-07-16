@@ -21,7 +21,8 @@ function Tank(xPos, zPos, landscape, audioMixer) {
     this.parts.turret.position.y = 2;
 
     this.parts.gun = new THREE.Object3D();
-    var gunBox = new THREE.BoxGeometry( 4, 0.4, 0.4 );
+    var gunBox = new THREE.CylinderGeometry( 0.3, 0.3, 4 );
+    gunBox.applyMatrix( new THREE.Matrix4().makeRotationZ( Math.PI / 2 ) );
     var mesh = new THREE.Mesh( gunBox, material );
     this.parts.gunMesh = mesh;
     this.parts.gun.add(mesh);

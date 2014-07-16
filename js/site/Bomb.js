@@ -8,7 +8,7 @@ function Bomb(position, vector, landscape, audioMixer) {
 
     this.parts = {};
     this.parts.body = new THREE.Object3D();
-    var bodyBox = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+    var bodyBox = new THREE.SphereGeometry( 0.3, 0.3, 0.3 );
     var mesh = new THREE.Mesh( bodyBox, material );
     this.parts.body.add(mesh);
 
