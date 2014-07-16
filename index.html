@@ -1,34 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tank Ballistics</title>
-    <link rel="stylesheet" href="./css/game.css"/>
-    <script src="./js/vendor/jquery-1.11.0.min.js"></script>
-    <script src="./js/vendor/three.js"></script>
-    <script src="./js/vendor/jssynth_core.js"></script>
-    <script src="./audio/tankFire.js"></script>
-    <script src="./audio/explosion.js"></script>
-    <script src="./js/site/landscape.js"></script>
-    <script src="./js/site/World.js"></script>
-    <script src="./js/site/Tank.js"></script>
-    <script src="./js/site/Bomb.js"></script>
-    <script src="./js/site/Controls.js"></script>
-    
-    <script>
-        (function() {
-            var mixer = new jssynth_core.Mixer({ numChannels: 4, volume: 64} /* global params */, { volume: 128 } /* default channel params */);
-            var audioOut = new jssynth_core.WebAudioOutput(mixer);
-            audioOut.start();
-            World.create(mixer);
-        })();
-    </script>
+<title>Tank Ballistics</title>
+<link rel="stylesheet" href="./css/game.css" />
+<script src="./js/vendor/jquery-1.11.0.min.js"></script>
+<script src="./js/vendor/three.js"></script>
+<script src="./js/vendor/jssynth_core.js"></script>
+<script src="./audio/tankFire.js"></script>
+<script src="./audio/explosion.js"></script>
+<script src="./js/site/landscape.js"></script>
+<script src="./js/site/World.js"></script>
+<script src="./js/site/Tank.js"></script>
+<script src="./js/site/Bomb.js"></script>
+<script src="./js/site/Controls.js"></script>
+
+<script>
+	(function() {
+		var mixer = new jssynth_core.Mixer({
+			numChannels : 4,
+			volume : 64
+		} /* global params */, {
+			volume : 128
+		} /* default channel params */);
+		var audioOut = new jssynth_core.WebAudioOutput(mixer);
+		audioOut.start();
+		World.create(mixer);
+	})();
+</script>
 </head>
 <body>
-<div id="container"></div>
-<button onclick="world.controls.setView('top')">Top view</button>
-<button onclick="world.controls.setView('far')">Far view</button>
-<button onclick="world.controls.setView('near')">Close view</button>
-<button onclick="world.controls.setView('side')">Side view</button>
-<button onclick="world.controls.setView('map')">Map view</button>
+	<div id="container"></div>
+	
+	<fieldset id="view-buttons">
+		<legend>Views</legend>
+		<button onclick="world.controls.setView('top')">Top</button>
+		<button onclick="world.controls.setView('side')">Side</button>
+		<button onclick="world.controls.setView('far')">Far</button>
+		<button onclick="world.controls.setView('near')">Close</button>
+		<button onclick="world.controls.setView('map')">Map</button>
+	</fieldset>
+
+	<fieldset id="controls-info">
+		<legend>Controls</legend>
+		<img id="directions-image" src="images/icons/direction-keys.svg" />
+	</fieldset>
+
+
+	</div>
 </body>
 </html>

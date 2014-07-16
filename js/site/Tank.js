@@ -5,8 +5,17 @@ function Tank(xPos, zPos, landscape, audioMixer) {
 
 	this.landscape = landscape;
 	
-    var material = new THREE.MeshLambertMaterial( { color: 0xFF0000 } );
-    var gunTipMaterial = new THREE.MeshLambertMaterial( { color: 0x404040 } );
+	this.tankColors = {
+			red: {body: "FF0000", gunTip: "404040"},
+			green: {body: "00FF00", gunTip: "404040"},
+			blue: {body: "0000FF", gunTip: "404040"},
+			yellow: {body: "FFFF00", gunTip: "404040"}
+	};
+	
+	this.colorScheme = this.tankColors.yellow;
+	
+    var material = new THREE.MeshLambertMaterial( { color: parseInt(this.colorScheme.body, 16) } );
+    var gunTipMaterial = new THREE.MeshLambertMaterial( { color: parseInt(this.colorScheme.gunTip, 16) } );
 
     this.parts = {};
     this.parts.base = new THREE.Object3D();
@@ -65,6 +74,21 @@ function Tank(xPos, zPos, landscape, audioMixer) {
     
     this.actions = {};
 }
+
+Tank.prototype.beginAction = function(name) {
+	if (name !== "fire") {
+		this.actions[name] = true;
+	}
+};
+
+Tank.prototype.endAction = function(name) {
+	if (name === "fire") {
+		this.fire();
+	}
+	else {
+		this.actions[name] = false;
+	}
+};
 
 Tank.prototype.step = function(delta) {
     if (this.actions.up) {

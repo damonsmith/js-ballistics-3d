@@ -4,6 +4,24 @@ function Controls(camera, canvas) {
 	this.camera = camera;
 	this.canvas = canvas;
 
+	this.keyboardTankControls = {
+		// Tank controls keys:
+		40 : "down",
+		38 : "up",
+		37 : "left",
+		39 : "right",
+		70 : "fire",
+	};
+	this.keyboardCameraControls = {
+		// Flying controls
+		87 : "moveForward",
+		65 : "moveLeft",
+		83 : "moveBackward",
+		68 : "moveRight",
+		32 : "moveUp",
+		16 : "moveDown"
+	};
+
 	// Set up pointerlock so that the mouse cursor is locked inside
 	// the canvas while you are clicking to look around.
 	this.canvas.requestPointerLock = canvas.requestPointerLock
@@ -21,12 +39,12 @@ function Controls(camera, canvas) {
 		side : [ 0, 0, 20 ],
 		map : [ 0, 500, 0 ]
 	};
-
-	this.moveForward = false;
-	this.moveBackward = false;
-	this.moveLeft = false;
-	this.moveRight = false;
-	this.moveUp = false;
+	this.actions = {};
+	this.actions.moveForward = false;
+	this.actions.moveBackward = false;
+	this.actions.moveLeft = false;
+	this.actions.moveRight = false;
+	this.actions.moveUp = false;
 
 	var self = this;
 	window.addEventListener("keydown", function(event) {
@@ -76,17 +94,17 @@ Controls.prototype.step = function(delta) {
 
 	// this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-	if (this.moveForward)
+	if (this.actions.moveForward)
 		this.velocity.z -= 400.0 * delta;
-	if (this.moveBackward)
+	if (this.actions.moveBackward)
 		this.velocity.z += 400.0 * delta;
-	if (this.moveLeft)
+	if (this.actions.moveLeft)
 		this.velocity.x -= 400.0 * delta;
-	if (this.moveRight)
+	if (this.actions.moveRight)
 		this.velocity.x += 400.0 * delta;
-	if (this.moveUp)
+	if (this.actions.moveUp)
 		this.yawObject.translateY(100 * delta);
-	if (this.moveDown)
+	if (this.actions.moveDown)
 		this.yawObject.translateY(-100 * delta);
 
 	this.yawObject.translateX(this.velocity.x * delta);
@@ -107,7 +125,7 @@ Controls.prototype.stop = function(unit) {
 	this.selectedUnit.actions = {};
 };
 
-Controls.prototype.setView = function(name) {
+Controls.prototype.setView = function(name, event) {
 	var view = this.fixedViews[name];
 	if (this.selectedUnit) {
 		var pos = this.selectedUnit.container.position;
@@ -123,13 +141,13 @@ Controls.prototype.lookAt = function(object) {
 	var dx = this.yawObject.position.x - object.position.x;
 	var dy = object.position.y - this.yawObject.position.y;
 	var dz = this.yawObject.position.z - object.position.z;
-	
+
 	if (dx === 0) {
 		dx = 0.001;
 	}
-	var yawLength = Math.sqrt((dz*dz) + (dx*dx));
-	var newYaw = Math.atan(dx/dz);
-	var newPitch = Math.atan(dy/yawLength);
+	var yawLength = Math.sqrt((dz * dz) + (dx * dx));
+	var newYaw = Math.atan(dx / dz);
+	var newPitch = Math.atan(dy / yawLength);
 	this.yawObject.rotation.y = newYaw;
 	this.pitchObject.rotation.x = newPitch;
 };
@@ -157,63 +175,53 @@ Controls.prototype.handleMouseMove = function(event) {
 	this.yawObject.rotation.y -= movementX * 0.002;
 	this.pitchObject.rotation.x -= movementY * 0.002;
 
-//	this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
-//			this.pitchObject.rotation.x));
+	this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
+	this.pitchObject.rotation.x));
 
 };
 
 Controls.prototype.handleKeyDown = function(event) {
+	var action;
+	var handled = false;
+	
 	if (this.selectedUnit) {
-		if (event.keyCode == 40) {
-			this.selectedUnit.actions.down = true;
-		} else if (event.keyCode == 38) {
-			this.selectedUnit.actions.up = true;
-		} else if (event.keyCode == 37) {
-			this.selectedUnit.actions.left = true;
-		} else if (event.keyCode == 39) {
-			this.selectedUnit.actions.right = true;
+		action = this.keyboardTankControls[event.keyCode];
+		if (action) {
+			this.selectedUnit.beginAction(action);
+			handled = true;
 		}
 	}
-	if (event.keyCode == 87) {
-		this.moveForward = true;
-	} else if (event.keyCode == 65) {
-		this.moveLeft = true;
-	} else if (event.keyCode == 83) {
-		this.moveBackward = true;
-	} else if (event.keyCode == 68) {
-		this.moveRight = true;
-	} else if (event.keyCode == 32) {
-		this.moveUp = true;
-	} else if (event.keyCode == 16) {
-		this.moveDown = true;
+	
+	action = this.keyboardCameraControls[event.keyCode];
+	if (action) {
+		this.actions[action] = true;
+		handled = true;
+	}
+	
+	if (handled) {
+		event.preventDefault();
 	}
 };
 
 Controls.prototype.handleKeyUp = function(event) {
+	var action;
+	var handled = false;
+	
 	if (this.selectedUnit) {
-		if (event.keyCode == 40) {
-			this.selectedUnit.actions.down = false;
-		} else if (event.keyCode == 38) {
-			this.selectedUnit.actions.up = false;
-		} else if (event.keyCode == 37) {
-			this.selectedUnit.actions.left = false;
-		} else if (event.keyCode == 39) {
-			this.selectedUnit.actions.right = false;
-		} else if (event.keyCode == 70) {
-			this.selectedUnit.fire();
+		action = this.keyboardTankControls[event.keyCode];
+		if (action) {
+			this.selectedUnit.endAction(action);
+			handled = true;
 		}
 	}
-	if (event.keyCode == 87) {
-		this.moveForward = false;
-	} else if (event.keyCode == 65) {
-		this.moveLeft = false;
-	} else if (event.keyCode == 83) {
-		this.moveBackward = false;
-	} else if (event.keyCode == 68) {
-		this.moveRight = false;
-	} else if (event.keyCode == 32) {
-		this.moveUp = false;
-	} else if (event.keyCode == 16) {
-		this.moveDown = false;
+	
+	action = this.keyboardCameraControls[event.keyCode];
+	if (action) {
+		this.actions[action] = false;
+		handled = true;
+	}
+	
+	if (handled) {
+		event.preventDefault();
 	}
 };

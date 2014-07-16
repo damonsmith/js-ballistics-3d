@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tank Ballistics</title>
+<link rel="stylesheet" href="./css/game.css" />
+</head>
+<body>
+	<div id="container"></div>
+
+	<fieldset id="view-buttons">
+		<legend>Views</legend>
+		<button onclick="world.controls.setView('top')">Top</button>
+		<button onclick="world.controls.setView('side')">Side</button>
+		<button onclick="world.controls.setView('far')">Far</button>
+		<button onclick="world.controls.setView('near')">Close</button>
+		<button onclick="world.controls.setView('map')">Map</button>
+	</fieldset>
+
+	<fieldset id="unit-info">
+		<legend>Unit</legend>
+		<div>None selected</div>
+		<div>Angle: <span>359&deg;</span>,<span>359&deg;</span></div>
+		<div>Power: <span>532</span></div>
+		<div>Ordnance: <span>Small bomb</span></div>
+		
+	</fieldset>
+
+	<fieldset id="controls-info">
+		<legend>Controls</legend>
+		<img id="directions-image" src="images/icons/direction-keys.svg"/>
+	</fieldset>
+
+
+</body>
+</html>
