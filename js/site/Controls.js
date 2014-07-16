@@ -10,6 +10,8 @@ function Controls(camera, canvas) {
 		38 : "up",
 		37 : "left",
 		39 : "right",
+		33 : "powerUp",
+		34 : "powerDown",
 		70 : "fire",
 	};
 	this.keyboardCameraControls = {
@@ -119,6 +121,7 @@ Controls.prototype.unselectUnit = function() {
 
 Controls.prototype.selectUnit = function(unit) {
 	this.selectedUnit = unit;
+	unit.setSelected();
 };
 
 Controls.prototype.stop = function(unit) {

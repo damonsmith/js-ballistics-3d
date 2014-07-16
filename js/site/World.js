@@ -47,14 +47,19 @@ function World(audioMixer) {
     landscapeModel.add(this.landscape.getMesh());
     this.scene.add( landscapeModel );
     
-    var tank = new Tank(10, 200, this.landscape, audioMixer);
-    this.addObject(tank);
-    this.scene.updateMatrixWorld(true);
-    
     this.controls = new Controls(this.camera, this.renderer.domElement);
-    this.controls.selectUnit(tank);
-    
     this.scene.add(this.controls.getObject());
+    
+    var gameRules = new GameRules(this);
+    
+    gameRules.setupGame([
+        {name: "Player 1", color: "red"},                   
+        {name: "Player 2", color: "yellow"},
+        {name: "Player 3", color: "green"},
+        {name: "Player 4", color: "blue"},
+	]);
+
+	this.scene.updateMatrixWorld(true);
 
     window.setTimeout(this.renderFunction, 1);
 }

@@ -18,7 +18,7 @@ function Bomb(position, vector, audioMixer) {
     this.container.position.y = position.y;
     this.container.position.z = position.z;
     this.audioMixer = audioMixer;
-    
+    this.eventListener = null;
 }
 
 
@@ -36,8 +36,7 @@ Bomb.prototype.step = function(delta) {
 		this.container.position.y <0 || this.container.position.y > 1000 ||
 		this.container.position.z > 1000) {
     	
-    	World.removeObject(this);
-        this.audioMixer.triggerSample(1, window['assets/samples/explosion-mono-s16-44100.raw'], 44100);
+    	this.explode();
     }
     
 };
@@ -46,4 +45,16 @@ Bomb.prototype.addToScene = function(scene) {
     scene.add(this.container);
     this.scene = scene;
 };
+
+Bomb.prototype.setBombEventListener = function(listener) {
+	this.eventListener = listener;
+}
+
+Bomb.prototype.explode = function() {
+	this.eventListener.bombLanded(this);
+	World.removeObject(this);
+    this.audioMixer.triggerSample(1, window['assets/samples/explosion-mono-s16-44100.raw'], 44100);
+    
+};
+
 

@@ -13,6 +13,7 @@
 <script src="./js/site/Tank.js"></script>
 <script src="./js/site/Bomb.js"></script>
 <script src="./js/site/Controls.js"></script>
+<script src="./js/site/TurnBasedGameRules.js"></script>
 
 <script>
 	(function() {
@@ -38,6 +39,14 @@
 		<button onclick="world.controls.setView('far')">Far</button>
 		<button onclick="world.controls.setView('near')">Close</button>
 		<button onclick="world.controls.setView('map')">Map</button>
+	</fieldset>
+
+	<fieldset id="unit-info">
+		<legend>Unit</legend>
+		<div><span id="selected-unit-name">None selected</span><div id="unit-color"></div></div>
+		<div>Power: <span id="unit-info-firing-power">0</span></div>
+		<div>Ordnance: </div>
+		<div id="unit-info-weapon-type">Small bomb</div>
 	</fieldset>
 
 	<fieldset id="controls-info">
