@@ -64,11 +64,12 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 	this.parts.turret.position.y = 2;
 
 	this.parts.gun = new THREE.Object3D();
-	var gunBox = new THREE.BoxGeometry(4, 0.4, 0.4);
-	var mesh = new THREE.Mesh(gunBox, material);
-	this.parts.gunMesh = mesh;
-	this.parts.gun.add(mesh);
-
+    var gunBox = new THREE.CylinderGeometry( 0.3, 0.3, 4 );
+    gunBox.applyMatrix( new THREE.Matrix4().makeRotationZ( Math.PI / 2 ) );
+    var mesh = new THREE.Mesh( gunBox, material );
+    this.parts.gunMesh = mesh;
+    this.parts.gun.add(mesh);
+    
 	mesh.applyMatrix(new THREE.Matrix4().makeTranslation(2, 0, 0));
 
 	this.parts.gunTip = new THREE.Object3D();

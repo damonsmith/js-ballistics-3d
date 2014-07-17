@@ -10,7 +10,7 @@ function Bomb(position, vector, world, audioMixer) {
 
     this.parts = {};
     this.parts.body = new THREE.Object3D();
-    var bodyBox = new THREE.BoxGeometry( 0.5, 0.5, 0.5 );
+    var bodyBox = new THREE.SphereGeometry( 0.3, 0.3, 0.3 );
     var mesh = new THREE.Mesh( bodyBox, material );
     this.parts.body.add(mesh);
 
@@ -21,6 +21,7 @@ function Bomb(position, vector, world, audioMixer) {
     this.container.position.z = position.z;
     this.audioMixer = audioMixer;
     this.eventListener = null;
+    this.landscape = world.landscape;
 }
 
 
