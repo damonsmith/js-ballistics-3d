@@ -6,6 +6,33 @@
 </head>
 <body>
 	<div id="container"></div>
+	
+	<div class="game-info">
+		<h1>ARTILLERY</h1>
+		<hr />
+		<p>Number of players: 
+		<select id="numberOfPlayers">
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+		</select> 
+		<button>Start game</button>
+		
+		
+		</p>
+		<img class="all-keys" src="images/icons/all-keys.svg"/>
+		
+	</div>
+	
+	<div class="turn-info">
+		<div class="left">Next turn: </div>
+		<div class="left unit-name">
+			<span id="next-turn-unit-name">Player X</span>
+			<div id="turn-unit-color" class="unit-color"></div>
+		</div>
+		<button onclick="TurnBasedGame.instance.nextTurn()">Ok</button>	
+	</div>
+			
 
 	<fieldset id="view-buttons">
 		<legend>Views</legend>
@@ -18,7 +45,7 @@
 
 	<fieldset id="unit-info">
 		<legend>Unit</legend>
-		<div id="selected-unit-name">None selected<div id="unit-color"></div></div>
+		<div id="selected-unit-name">None selected<div id="unit-color" class="unit-color"></div></div>
 		<div>Angle: <span id="unit-info-y-angle">359&deg;</span>,<span id="unit-info-x-angle">359&deg;</span></div>
 		<div>Power: <span id="unit-info-firing-power">532</span></div>
 		<div>Ordnance: <span id="unit-info-weapon-type">Small bomb</span></div>

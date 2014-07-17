@@ -1,4 +1,4 @@
-function Tank(xPos, zPos, landscape, audioMixer, name, color) {
+function Tank(xPos, zPos, world, audioMixer, name, color) {
 
 	this.name = name;
 	
@@ -20,7 +20,8 @@ function Tank(xPos, zPos, landscape, audioMixer, name, color) {
 	this.controlPanel.firingPower = $("#unit-info-firing-power");
 	this.controlPanel.weaponType = $("#unit-info-weapon-type");
 
-	this.landscape = landscape;
+	this.world = world;
+	this.landscape = world.landscape;
 
 	this.tankColors = {
 		red : {
@@ -179,8 +180,8 @@ Tank.prototype.fire = function() {
 		vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * this.firingPower;
 		vector.y = Math.sin(this.parts.gun.rotation.z) * this.firingPower;
 		vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * this.firingPower;
-		var bomb = new Bomb(position, vector, this.audioMixer);
-		World.addObject(bomb);
+		var bomb = new Bomb(position, vector, this.world, this.audioMixer);
+		this.world.addObject(bomb);
 		this.audioMixer.triggerSample(0, this.fireSample, 44100);
 		if (this.eventListener) {
 			this.eventListener.bombFired(this, bomb);

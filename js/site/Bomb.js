@@ -1,5 +1,7 @@
-function Bomb(position, vector, audioMixer) {
+function Bomb(position, vector, world, audioMixer) {
 
+	this.world = world;
+	
 	this.worldSize = 1000;
 	
     this.vector = vector;
@@ -52,7 +54,7 @@ Bomb.prototype.setBombEventListener = function(listener) {
 
 Bomb.prototype.explode = function() {
 	this.eventListener.bombLanded(this);
-	World.removeObject(this);
+	this.world.removeObject(this);
     this.audioMixer.triggerSample(1, window['assets/samples/explosion-mono-s16-44100.raw'], 44100);
     
 };

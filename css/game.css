@@ -30,6 +30,61 @@ body,header,h1,h2,h3,h4,h5 {
     float: left;
 }
 
+.game-info {
+	display: none;
+	position: absolute;
+	width: 600px;
+	height: 400px;
+	left: 212px;
+	top: 100px;
+	background-color: #666;
+}
+
+.turn-info {
+	display: none;
+	position: absolute;
+	width: 400px;
+	left: 312px;
+	top: 100px;
+	background-color: #666;
+	padding: 0.3rem;
+}
+.turn-info > div {
+	margin-top: 2px;
+}
+
+.turn-info > button {
+	float: right;
+}
+
+
+.unit-name {
+	width: 8rem;
+	margin-left: 1rem;
+	background-color: #888;
+	padding: 0 0.3rem;
+}
+
+#turn-unit-color {
+	background-color: red;
+}
+
+.game-info h1, p {
+	padding: 0 1rem;
+}
+
+.game-info button, .game-info select, .turn-info button {
+	background-color: #444;
+	border-radius: 0.3rem;
+}
+
+.game-info .all-keys {
+	width: 550px;
+	display: block;
+    margin: auto;
+    width: 550px;
+}
+
 fieldset {
 	float: left;
 	width: 12.2rem;
@@ -37,7 +92,7 @@ fieldset {
 	margin-left: 0.5rem;
 }
 
-button {
+fieldset button {
 	background-color: #444;
 	float: left;
 	width: 5rem;
@@ -65,7 +120,7 @@ button {
 	float: right;
 }
 
-#unit-color {
+.unit-color {
 	float: right;
 	width: 1rem;
 	height: 1rem;

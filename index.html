@@ -13,36 +13,52 @@
 <script src="./js/site/Tank.js"></script>
 <script src="./js/site/Bomb.js"></script>
 <script src="./js/site/Controls.js"></script>
-<script src="./js/site/TurnBasedGameRules.js"></script>
+<script src="./js/site/TurnBasedGame.js"></script>
 
 <script>
-	(function() {
-		var mixer = new jssynth_core.Mixer({
-			numChannels : 4,
-			volume : 64
-		} /* global params */, {
-			volume : 128
-		} /* default channel params */);
-		var audioOut = new jssynth_core.WebAudioOutput(mixer);
-		audioOut.start();
-		World.create(mixer);
-	})();
+	TurnBasedGame.create();
 </script>
 </head>
 <body>
 	<div id="container"></div>
 	
+	<div id="gameInfo" class="game-info">
+		<h1>ARTILLERY</h1>
+		<hr />
+		<p>Number of players: 
+		<select id="numberOfPlayers">
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="4">4</option>
+		</select> 
+		
+		<button onclick="TurnBasedGame.instance.setupGame()">Start game</button>		
+		
+		</p>
+		<img class="all-keys" src="images/icons/all-keys.svg"/>
+		
+	</div>
+	
+	<div id="turnInfo" class="turn-info">
+		<div class="left">Next turn: </div>
+		<div class="left unit-name">
+			<span id="next-turn-unit-name">Player X</span>
+			<div id="turn-unit-color" class="unit-color"></div>
+		</div>
+		<button onclick="TurnBasedGame.instance.startNextTurn()">Ok</button>	
+	</div>
+	
 	<fieldset id="view-buttons">
 		<legend>Views</legend>
-		<button onclick="world.controls.setView('top')">Top</button>
-		<button onclick="world.controls.setView('side')">Side</button>
-		<button onclick="world.controls.setView('far')">Far</button>
-		<button onclick="world.controls.setView('near')">Close</button>
-		<button onclick="world.controls.setView('map')">Map</button>
+		<button onclick="TurnBasedGame.instance.world.controls.setView('top')">Top</button>
+		<button onclick="TurnBasedGame.instance.world.controls.setView('side')">Side</button>
+		<button onclick="TurnBasedGame.instance.world.controls.setView('far')">Far</button>
+		<button onclick="TurnBasedGame.instance.world.controls.setView('near')">Near</button>
+		<button onclick="TurnBasedGame.instance.world.controls.setView('map')">Map</button>
 	</fieldset>
 
 	<fieldset id="unit-info">
-		<legend>Unit</legend>
+		<legend>Players</legend>
 		<div><span id="selected-unit-name">None selected</span><div id="unit-color"></div></div>
 		<div>Power: <span id="unit-info-firing-power">0</span></div>
 		<div>Ordnance: </div>

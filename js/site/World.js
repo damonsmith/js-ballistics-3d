@@ -1,5 +1,16 @@
-function World(audioMixer) {
-    this.audioMixer = audioMixer;
+function World() {
+
+	var audioMixer = new jssynth_core.Mixer({
+		numChannels : 4,
+		volume : 64
+	} /* global params */, {
+		volume : 128
+	} /* default channel params */);
+	var audioOut = new jssynth_core.WebAudioOutput(audioMixer);
+	audioOut.start();
+    
+	this.audioMixer = audioMixer;
+    
 	this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
 	
@@ -50,15 +61,6 @@ function World(audioMixer) {
     this.controls = new Controls(this.camera, this.renderer.domElement);
     this.scene.add(this.controls.getObject());
     
-    var gameRules = new GameRules(this);
-    
-    gameRules.setupGame([
-        {name: "Player 1", color: "red"},                   
-        {name: "Player 2", color: "yellow"},
-        {name: "Player 3", color: "green"},
-        {name: "Player 4", color: "blue"},
-	]);
-
 	this.scene.updateMatrixWorld(true);
 
     window.setTimeout(this.renderFunction, 1);
@@ -90,20 +92,4 @@ World.prototype.removeObject = function(object) {
         this.objects.splice(index, 1);
         this.scene.remove(object.container);
     }
-};
-
-//Global functions:
-World.create = function(audioMixer) {
-	window.addEventListener("load", function() {
-		window.world = new World(audioMixer);
-	});
-};
-
-//in lieu of proper events:
-World.addObject = function(object) {
-	world.addObject(object);
-};
-
-World.removeObject = function(object) {
-	world.removeObject(object);
 };
