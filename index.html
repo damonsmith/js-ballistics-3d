@@ -48,6 +48,23 @@
 		<button onclick="TurnBasedGame.instance.startNextTurn()">Ok</button>	
 	</div>
 	
+		<div id="endGameInfo" class="end-game-info hidden">
+		<h1>Game over. <span id="winning-player"></span></h1>
+		<div class="winning-player-color"></div>
+		<hr />
+		<div class="turn-results">
+		</div>
+		
+		<div class="hidden" id="turnResultTemplate">
+			<div class="left unit-name">[name1]<div id="unit-color" class="unit-color [color1]"></div></div>
+			<div>destroyed</div>
+			<div class="left unit-name">[name2]<div id="unit-color" class="unit-color [color2]"></div></div>
+			<hr />
+		</div>
+		
+	</div>
+	
+	
 	<fieldset id="view-buttons">
 		<legend>Views</legend>
 		<button onclick="TurnBasedGame.instance.world.controls.setView('top')">Top</button>
@@ -64,13 +81,5 @@
 		<div>Ordnance: </div>
 		<div id="unit-info-weapon-type">Small bomb</div>
 	</fieldset>
-
-	<fieldset id="controls-info">
-		<legend>Controls</legend>
-		<img id="directions-image" src="images/icons/direction-keys.svg" />
-	</fieldset>
-
-
-	</div>
 </body>
 </html>

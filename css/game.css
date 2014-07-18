@@ -12,6 +12,10 @@ div,article,section,header,nav,section,fieldset {
 	-moz-box-sizing: border-box;
 }
 
+hr {
+	clear: both;
+}
+
 body {
 	background: #222;
 	color: white;
@@ -28,6 +32,10 @@ body,header,h1,h2,h3,h4,h5 {
     width: 1024px;
     height: 600px;
     float: left;
+}
+
+.hidden {
+	display: none;
 }
 
 .game-info {
@@ -49,6 +57,32 @@ body,header,h1,h2,h3,h4,h5 {
 	background-color: #666;
 	padding: 0.3rem;
 }
+
+.end-game-info {
+	position: absolute;
+	left: 312px;
+	top: 100px;
+	background-color: #666;
+	padding: 0.3rem;
+}
+
+.winning-player-color {
+	height: 1rem;
+	width: 100%;
+	float: left;
+	margin-bottom: 1rem;
+}
+
+.turn-results > div {
+	float: left;
+	margin: 0 0.5rem;
+}
+
+.red {background-color: red;}
+.yellow {background-color: yellow;}
+.blue {background-color: blue;}
+.green {background-color: green;}
+
 .turn-info > div {
 	margin-top: 2px;
 }

@@ -96,8 +96,12 @@
         return mesh;
     };
     
-    window.game.scenery.Landscape.prototype.getAltitude = function(x, z) {
-        var altitude = this.points[Math.floor(x + (this.xpoints /2))][Math.floor(z + (this.ypoints / 2))];
+    window.game.scenery.Landscape.prototype.getElevation = function(x, z) {
+    	var xPoints, altitude = 0;
+    	xPoints = this.points[Math.floor(x + (this.xpoints /2))];
+    	if (xPoints) {
+    		altitude = xPoints[Math.floor(z + (this.ypoints / 2))];
+    	}
         if (altitude < 0) {
             altitude = 0;
         }

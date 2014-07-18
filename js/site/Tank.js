@@ -3,8 +3,12 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 	this.name = name;
 	
 	this.canFire = false;
-
-	this.maxPower = 150;
+	
+	this.damageCapacity = 100;
+	this.currentDamage = 0;
+	this.destroyed = false;
+	
+	this.maxPower = 1500;
 	
 	this.eventListener = null;
 	
@@ -12,7 +16,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 
 	this.fireSample = window['assets/samples/tank-fire-mono-s16-44100.raw'];
 
-	this.firingPower = 10;
+	this.firingPower = 500;
 
 	this.controlPanel = {};
 	this.controlPanel.selectedUnitName = $("#selected-unit-name");
@@ -104,7 +108,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 
 	this.container.position.x = xPos;
 	this.container.position.z = zPos;
-	this.container.position.y = 1 + this.landscape.getAltitude(xPos, zPos);
+	this.container.position.y = 1 + this.landscape.getElevation(xPos, zPos);
 
 	this.actions = {
 		up : false,
@@ -131,29 +135,31 @@ Tank.prototype.endAction = function(name) {
 };
 
 Tank.prototype.step = function(delta) {
-	if (this.actions.up) {
-		this.parts.gun.rotation.z += delta;
-	}
-	if (this.actions.down) {
-		this.parts.gun.rotation.z -= delta;
-	}
-	if (this.actions.left) {
-		this.parts.turret.rotation.y += delta;
-	}
-	if (this.actions.right) {
-		this.parts.turret.rotation.y -= delta;
-	}
-	if (this.actions.powerUp) {
-		if (this.firingPower < this.maxPower) {
-			this.firingPower++;
-			this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+	if (this.canFire) {
+		if (this.actions.up) {
+			this.parts.gun.rotation.z += delta;
 		}
-	}
-	if (this.actions.powerDown) {
-		if (this.firingPower > 1) {
-			this.firingPower--;
-			this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+		if (this.actions.down) {
+			this.parts.gun.rotation.z -= delta;
 		}
+		if (this.actions.left) {
+			this.parts.turret.rotation.y += delta;
+		}
+		if (this.actions.right) {
+			this.parts.turret.rotation.y -= delta;
+		}
+		if (this.actions.powerUp) {
+			if (this.firingPower < this.maxPower) {
+				this.firingPower+=2;
+				this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+			}
+		}
+		if (this.actions.powerDown) {
+			if (this.firingPower > 1) {
+				this.firingPower-=2;
+				this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+			}
+		}	
 	}
 }
 
@@ -178,9 +184,10 @@ Tank.prototype.fire = function() {
 		position.setFromMatrixPosition(this.parts.gunTipMesh.matrixWorld);
 		var yComponent = Math.cos(this.parts.gun.rotation.z);
 		var vector = {};
-		vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * this.firingPower;
-		vector.y = Math.sin(this.parts.gun.rotation.z) * this.firingPower;
-		vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * this.firingPower;
+		var actualFiringPower = this.firingPower/10;
+		vector.x = (yComponent * Math.cos(this.parts.turret.rotation.y)) * actualFiringPower;
+		vector.y = Math.sin(this.parts.gun.rotation.z) * actualFiringPower;
+		vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * actualFiringPower;
 		var bomb = new Bomb(position, vector, this.world, this.audioMixer);
 		this.world.addObject(bomb);
 		this.audioMixer.triggerSample(0, this.fireSample, 44100);
@@ -188,4 +195,16 @@ Tank.prototype.fire = function() {
 			this.eventListener.bombFired(this, bomb);
 		}
 	}
+};
+
+Tank.prototype.damage = function(amount) {
+	this.currentDamage += amount;
+	if (this.currentDamage >= this.damageCapacity) {
+		this.explode();
+		this.eventListener.tankDestroyed(this);
+	}
+};
+
+Tank.prototype.explode = function() {
+	this.destroyed = true;
 };

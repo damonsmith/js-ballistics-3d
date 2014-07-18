@@ -1,10 +1,17 @@
 TurnBasedGame = function() {
 	
+	this.turnNumber = 0;
+	
 	this.tanks = [];
+	
+	this.tanksDestroyedList = [];
+	this.tanksDestroyed = {};
+	
+	this.tanksDestroyedThisTurn = [];
 	
 	this.selectedTank;
 	
-	this.playerList = [ //all positions are + random() * 100.
+	this.availablePlayerList = [ //all positions are + random() * 100.
          {name: "Player 1", color: "red", x: -200, z: -200},                   
          {name: "Player 2", color: "yellow", x: 100, z: 100},
          {name: "Player 3", color: "green", x: -200, z: 100},
@@ -24,10 +31,10 @@ TurnBasedGame.prototype.setupGame = function() {
 	
 	var i, tank;
 	for (i=0; i<numberOfPlayers; i++) {
-		var player = this.playerList[i];
+		var player = this.availablePlayerList[i];
 		
 		tank = new Tank(
-				player.x + (Math.random() * 100), 
+				player.x + (Math.random() * 100),
 				player.z + (Math.random() * 100), 
 				this.world, 
 				this.world.audioMixer, 
@@ -35,6 +42,7 @@ TurnBasedGame.prototype.setupGame = function() {
 				player.color);
 		
 		this.tanks.push(tank);
+		tank.player = player;
 		tank.setTankEventListener(this);
 	    this.world.addObject(tank);
 	}
@@ -45,21 +53,54 @@ TurnBasedGame.prototype.setupGame = function() {
 
 TurnBasedGame.prototype.endTurn = function() {
 	this.turnEnded = true;
-	var nextPlayer = this.playerList[this.getNextPlayerNumber()];
-	document.getElementById("next-turn-unit-name").innerHTML = nextPlayer.name;
-	document.getElementById("turn-unit-color").style.backgroundColor = nextPlayer.color;
-	document.getElementById("turnInfo").style.display = "block";
+	if (this.tanksDestroyedList.length >= this.tanks.length - 1) {
+		this.endGame();
+	}
+	else {
+		var nextPlayer = this.getNextTank().player;
+		document.getElementById("next-turn-unit-name").innerHTML = nextPlayer.name;
+		document.getElementById("turn-unit-color").style.backgroundColor = nextPlayer.color;
+		document.getElementById("turnInfo").style.display = "block";	
+	}
 };
 
-TurnBasedGame.prototype.getNextPlayerNumber = function() {
-	var currentPlayerNumber = this.tanks.indexOf(this.selectedTank);
-	return (currentPlayerNumber+1)%this.tanks.length;
+TurnBasedGame.prototype.endGame = function() {
+	if (this.tanksDestroyedList.length === this.tanks.length - 1) {
+		
+		var i, winningTank;
+		for (i=0; i<this.tanks.length; i++) {
+			if (!this.tanks[i].destroyed) {
+				winningTank = this.tanks[i];
+				break;
+			}
+		}
+		
+		$("#winning-player").html(winningTank.name + " wins!");
+		$(".winning-player-color")[0].style.backgroundColor = winningTank.player.color;
+		$("#endGameInfo").show();
+	}
+	else if (this.tanksDestroyedList.length === this.tanks.length) {
+		$("#winning-player").html("Draw, all tanks destroyed.");
+		$("#endGameInfo").show();
+	}
+};
+
+TurnBasedGame.prototype.getNextTank = function() {
+	var i, nextTank, currentTankNumber = this.tanks.indexOf(this.selectedTank);
+	for (i=currentTankNumber + 1; i<(currentTankNumber + this.tanks.length); i++) {
+		nextTank = this.tanks[i%this.tanks.length];
+		if (!nextTank.destroyed) {
+			return nextTank;
+		}
+	}
+	throw "Code error, can't find next tank.";
 };
 
 TurnBasedGame.prototype.startNextTurn = function() {
 	if (this.turnEnded) {
-		var nextPlayerNumber = this.getNextPlayerNumber();
-		this.selectedTank = this.tanks[nextPlayerNumber];
+		this.turnNumber++;
+		this.tanksDestroyedThisTurn = [];
+		this.selectedTank = this.getNextTank();
 		this.world.controls.selectUnit(this.selectedTank);
 		this.selectedTank.canFire = true;
 		this.world.controls.setView("far");
@@ -78,7 +119,9 @@ TurnBasedGame.prototype.bombLanded = function(bomb) {
 };
 
 TurnBasedGame.prototype.tankDestroyed = function(tank) {
-	
+	this.tanksDestroyed[tank.name] = {destroyedBy: this.selectedTank, turnNumber: this.turnNumber};
+	this.tanksDestroyedList.push(tank);
+	this.tanksDestroyedThisTurn.push(tank);
 };
 
 TurnBasedGame.create = function() {

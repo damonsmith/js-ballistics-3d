@@ -32,7 +32,22 @@
 		</div>
 		<button onclick="TurnBasedGame.instance.nextTurn()">Ok</button>	
 	</div>
-			
+	
+	<div class="end-game-info">
+		<h1>Game over. <span id="winning-player"></span></h1>
+		<div class="winning-player-color"></div>
+		<hr />
+		<div class="turn-results">
+		</div>
+		
+		<div class="hidden" id="turnResultTemplate">
+			<div class="left unit-name">[name1]<div id="unit-color" class="unit-color [color1]"></div></div>
+			<div>destroyed</div>
+			<div class="left unit-name">[name2]<div id="unit-color" class="unit-color [color2]"></div></div>
+			<hr />
+		</div>
+		
+	</div>
 
 	<fieldset id="view-buttons">
 		<legend>Views</legend>
