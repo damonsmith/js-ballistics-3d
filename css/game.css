@@ -107,7 +107,7 @@ body,header,h1,h2,h3,h4,h5 {
 	padding: 0 1rem;
 }
 
-.game-info button, .game-info select, .turn-info button {
+button, select {
 	background-color: #444;
 	border-radius: 0.3rem;
 }
@@ -161,5 +161,29 @@ fieldset button {
 	border-radius: 0.3rem;
 	margin-top: 0.3rem;
 }
+
+.health-bar {
+	float: left;
+	height: 0.3rem;
+	width: 100%;
+	position: relative;
+	background: -moz-linear-gradient(left, #e50000 0%, #35ff71 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#e50000), color-stop(100%,#35ff71)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, #e50000 0%,#35ff71 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, #e50000 0%,#35ff71 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, #e50000 0%,#35ff71 100%); /* IE10+ */
+	background: linear-gradient(to right, #e50000 0%,#35ff71 100%); /* W3C */
+}
+
+.health-bar-cover {
+	position: absolute;
+	height: 100%;
+	top: 0;
+	right: 0;
+	width: 100%;
+	background-color: #000;
+}
+
+
 
 

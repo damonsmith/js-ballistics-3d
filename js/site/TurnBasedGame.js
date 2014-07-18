@@ -1,31 +1,44 @@
 TurnBasedGame = function() {
 	
 	this.turnNumber = 0;
-	
 	this.tanks = [];
-	
 	this.tanksDestroyedList = [];
 	this.tanksDestroyed = {};
-	
 	this.tanksDestroyedThisTurn = [];
-	
 	this.selectedTank;
 	
 	this.availablePlayerList = [ //all positions are + random() * 100.
-         {name: "Player 1", color: "red", x: -200, z: -200},                   
-         {name: "Player 2", color: "yellow", x: 100, z: 100},
-         {name: "Player 3", color: "green", x: -200, z: 100},
-         {name: "Player 4", color: "blue", x: 100, z: -200}
+         {name: "Player 1", color: "red", x: -200, z: -200, healthBarElement: $("#player-1-status .health-bar-cover")},                   
+         {name: "Player 2", color: "yellow", x: 100, z: 100, healthBarElement: $("#player-2-status .health-bar-cover")},
+         {name: "Player 3", color: "green", x: -200, z: 100, healthBarElement: $("#player-3-status .health-bar-cover")},
+         {name: "Player 4", color: "blue", x: 100, z: -200, healthBarElement: $("#player-4-status .health-bar-cover")}
  	];
 	
-	document.getElementById("gameInfo").style.display = "block";
+	this.controlPanel = {};
+	this.controlPanel.selectedUnitName = $("#selected-unit-name");
+	this.controlPanel.unitColor = $("#unit-color");
+	this.controlPanel.firingPower = $("#unit-info-firing-power");
+	this.controlPanel.weaponType = $("#unit-info-weapon-type");
+	
+	
+	$("#gameInfo").show();
 };
 
 TurnBasedGame.prototype.setupGame = function() {
 	
-	var numberOfPlayers = document.getElementById("numberOfPlayers").value;
+	this.turnNumber = 0;
+	this.tanks = [];
+	this.tanksDestroyedList = [];
+	this.tanksDestroyed = {};
+	this.tanksDestroyedThisTurn = [];
+	this.selectedTank;
 	
-	this.world = new World();
+	var numberOfPlayers = document.getElementById("numberOfPlayers").value;
+	if (!this.world) {
+		this.world = new World();	
+	}
+	
+	this.world.setupLandscape();
 	
 	this.turnEnded = true;
 	
@@ -45,9 +58,10 @@ TurnBasedGame.prototype.setupGame = function() {
 		tank.player = player;
 		tank.setTankEventListener(this);
 	    this.world.addObject(tank);
+	    this.tankDamageChanged(tank);
 	}
 	this.selectedTank = tank;
-	document.getElementById("gameInfo").style.display = "none";
+	$("#gameInfo").hide();
 	this.endTurn();
 };
 
@@ -85,6 +99,12 @@ TurnBasedGame.prototype.endGame = function() {
 	}
 };
 
+TurnBasedGame.prototype.restart = function() {
+	$("#endGameInfo").hide();
+	$("#gameInfo").show();
+	
+};
+
 TurnBasedGame.prototype.getNextTank = function() {
 	var i, nextTank, currentTankNumber = this.tanks.indexOf(this.selectedTank);
 	for (i=currentTankNumber + 1; i<(currentTankNumber + this.tanks.length); i++) {
@@ -105,36 +125,59 @@ TurnBasedGame.prototype.startNextTurn = function() {
 		this.selectedTank.canFire = true;
 		this.world.controls.setView("far");
 		document.getElementById("turnInfo").style.display = "none";
+		
+		this.controlPanel.selectedUnitName[0].innerHTML = this.selectedTank.name;
+		this.controlPanel.unitColor[0].style.backgroundColor = "#" + this.selectedTank.colorScheme.body;
+		this.controlPanel.firingPower[0].innerHTML = this.selectedTank.firingPower;
+		
 		this.turnEnded = false;
 	}
 };
 
+/** Tank event handlers **/
 TurnBasedGame.prototype.bombFired = function(tank, bomb) {
 	tank.canFire = false;
 	bomb.setBombEventListener(this);
-};
-
-TurnBasedGame.prototype.bombLanded = function(bomb) {
-	this.endTurn();
 };
 
 TurnBasedGame.prototype.tankDestroyed = function(tank) {
 	this.tanksDestroyed[tank.name] = {destroyedBy: this.selectedTank, turnNumber: this.turnNumber};
 	this.tanksDestroyedList.push(tank);
 	this.tanksDestroyedThisTurn.push(tank);
+	tank.player.healthBarElement.width("100%");
 };
+
+TurnBasedGame.prototype.tankDamageChanged = function(tank) {
+	var percentageLost = (tank.currentDamage / tank.damageCapacity) * 100;
+	tank.player.healthBarElement.width(Math.ceil(percentageLost) + "%");
+};
+
+TurnBasedGame.prototype.firingPowerChanged = function(power) {
+	this.controlPanel.firingPower[0].innerHTML = power;
+};
+
+TurnBasedGame.prototype.xAngleChanged = function(angle) {
+	
+};
+
+TurnBasedGame.prototype.yAngleChanged = function(angle) {
+	
+};
+
+/** end Tank event handlers **/
+
+/** Bomb event handlers **/
+TurnBasedGame.prototype.bombLanded = function(bomb) {
+	this.endTurn();
+};
+
+/** end Bomb event handlers **/
+
+
+/** Global static functions **/
 
 TurnBasedGame.create = function() {
 	window.addEventListener("load", function() {
 		TurnBasedGame.instance = new TurnBasedGame();
 	});
-};
-
-//in lieu of proper events:
-TurnBasedGame.addObject = function(object) {
-	TurnBasedGame.instance.world.addObject(object);
-};
-
-TurnBasedGame.removeObject = function(object) {
-	TurnBasedGame.instance.world.removeObject(object);
 };

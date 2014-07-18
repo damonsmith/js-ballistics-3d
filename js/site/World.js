@@ -49,22 +49,44 @@ function World() {
     	self.render();
     }
     
-    this.landscape = new game.scenery.Landscape();
-    console.log("Now terraforming.. ");
-    this.landscape.terraform();
-    console.log(".. terraforming done. ");
-    
-    var landscapeModel = new THREE.Object3D();
-    landscapeModel.add(this.landscape.getMesh());
-    this.scene.add( landscapeModel );
+    this.start();
     
     this.controls = new Controls(this.camera, this.renderer.domElement);
     this.scene.add(this.controls.getObject());
     
 	this.scene.updateMatrixWorld(true);
-
-    window.setTimeout(this.renderFunction, 1);
 }
+
+World.prototype.clearWorld = function() {
+	if (this.landscapeModel) {
+		this.scene.remove(this.landscapeModel );
+	}
+	while (this.objects.length > 0) {
+		this.removeObject(this.objects[0]);
+	}
+};
+
+World.prototype.setupLandscape = function() {
+	this.clearWorld();
+	this.landscape = new game.scenery.Landscape();
+    console.log("Now terraforming.. ");
+    this.landscape.terraform();
+    console.log(".. terraforming done. ");
+    
+    this.landscapeModel = new THREE.Object3D();
+    this.landscapeModel.add(this.landscape.getMesh());
+    this.scene.add( this.landscapeModel );
+};
+
+World.prototype.start = function() {
+	this.running = true;
+	window.setTimeout(this.renderFunction, 1);
+};
+
+World.prototype.stop = function() {
+	this.running = false;
+};
+
 
 World.prototype.render = function() {
     var delta = this.clock.getDelta();
@@ -77,7 +99,9 @@ World.prototype.render = function() {
 
     this.renderer.render(this.scene, this.camera);
 
-    requestAnimationFrame(this.renderFunction);
+    if (this.running) {
+    	requestAnimationFrame(this.renderFunction);	
+    }
 };
 
 World.prototype.addObject = function(object) {
