@@ -18,14 +18,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 
 	this.firingPower = 500;
 
-	this.controlPanel = {};
-	this.controlPanel.selectedUnitName = $("#selected-unit-name");
-	this.controlPanel.unitColor = $("#unit-color");
-	this.controlPanel.firingPower = $("#unit-info-firing-power");
-	this.controlPanel.weaponType = $("#unit-info-weapon-type");
-
 	this.world = world;
-	this.landscape = world.landscape;
 
 	this.tankColors = {
 		red : {
@@ -108,7 +101,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
 
 	this.container.position.x = xPos;
 	this.container.position.z = zPos;
-	this.container.position.y = 1 + this.landscape.getElevation(xPos, zPos);
+	this.container.position.y = 1 + this.world.landscape.getElevation(xPos, zPos);
 
 	this.actions = {
 		up : false,
@@ -138,26 +131,30 @@ Tank.prototype.step = function(delta) {
 	if (this.canFire) {
 		if (this.actions.up) {
 			this.parts.gun.rotation.z += delta;
+			this.eventListener.xAngleChanged(this.parts.gun.rotation.z);
 		}
 		if (this.actions.down) {
 			this.parts.gun.rotation.z -= delta;
+			this.eventListener.xAngleChanged(this.parts.gun.rotation.z);
 		}
 		if (this.actions.left) {
 			this.parts.turret.rotation.y += delta;
+			this.eventListener.yAngleChanged(this.parts.turret.rotation.y);
 		}
 		if (this.actions.right) {
 			this.parts.turret.rotation.y -= delta;
+			this.eventListener.yAngleChanged(this.parts.turret.rotation.y);
 		}
 		if (this.actions.powerUp) {
 			if (this.firingPower < this.maxPower) {
 				this.firingPower+=2;
-				this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+				this.eventListener.firingPowerChanged(this.firingPower);
 			}
 		}
 		if (this.actions.powerDown) {
 			if (this.firingPower > 1) {
 				this.firingPower-=2;
-				this.controlPanel.firingPower[0].innerHTML = this.firingPower;
+				this.eventListener.firingPowerChanged(this.firingPower);
 			}
 		}	
 	}
@@ -168,9 +165,6 @@ Tank.prototype.radToDeg = function(radians) {
 };
 
 Tank.prototype.setSelected = function() {
-	this.controlPanel.selectedUnitName[0].innerHTML = this.name;
-	this.controlPanel.unitColor[0].style.backgroundColor = "#" + this.colorScheme.body;
-	this.controlPanel.firingPower[0].innerHTML = this.firingPower;
 };
 
 Tank.prototype.setTankEventListener = function(listener) {
@@ -202,6 +196,9 @@ Tank.prototype.damage = function(amount) {
 	if (this.currentDamage >= this.damageCapacity) {
 		this.explode();
 		this.eventListener.tankDestroyed(this);
+	}
+	else {
+		this.eventListener.tankDamageChanged(this, this.currentDamage, this.damageCapacity);
 	}
 };
 

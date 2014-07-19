@@ -54,7 +54,7 @@
 		<hr />
 		<div class="turn-results">
 		</div>
-		
+		<button onclick="TurnBasedGame.instance.restart()">Start new game</button>
 		<div class="hidden" id="turnResultTemplate">
 			<div class="left unit-name">[name1]<div id="unit-color" class="unit-color [color1]"></div></div>
 			<div>destroyed</div>
@@ -75,11 +75,36 @@
 	</fieldset>
 
 	<fieldset id="unit-info">
-		<legend>Players</legend>
+		<legend>Current Player</legend>
 		<div><span id="selected-unit-name">None selected</span><div id="unit-color"></div></div>
 		<div>Power: <span id="unit-info-firing-power">0</span></div>
 		<div>Ordnance: </div>
 		<div id="unit-info-weapon-type">Small bomb</div>
 	</fieldset>
+	
+	<fieldset id="unit-list">
+		<legend>Players</legend>
+		<div id="player-1-status">
+			<span>Player 1</span><div class="unit-color red"></div>
+			<div class="health-bar"><div class="health-bar-cover"></div></div>
+		</div>
+		
+		<div id="player-2-status">
+			<span>Player 2</span><div class="unit-color yellow"></div>
+			<div class="health-bar"><div class="health-bar-cover"></div></div>
+		</div>
+		
+		<div id="player-3-status">
+			<span>Player 3</span><div class="unit-color green"></div>
+			<div class="health-bar"><div class="health-bar-cover"></div></div>
+		</div>
+		
+		<div id="player-4-status">
+			<span>Player 4</span><div class="unit-color blue"></div>
+			<div class="health-bar"><div class="health-bar-cover"></div></div>
+		</div>
+	</fieldset>
+	
+	
 </body>
 </html>

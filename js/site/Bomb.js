@@ -40,7 +40,6 @@ function Bomb(position, vector, world, audioMixer) {
 	this.container.position.z = position.z;
 	this.audioMixer = audioMixer;
 	this.eventListener = null;
-	this.landscape = world.landscape;
 }
 
 Bomb.prototype.step = function(delta) {
@@ -57,7 +56,7 @@ Bomb.prototype.step = function(delta) {
 		var x = this.container.position.x;
 		var y = this.container.position.y;
 		var z = this.container.position.z;
-		if ((y < this.landscape.getElevation(x, z)) || y > 5000 || x > 1000
+		if ((y < this.world.landscape.getElevation(x, z)) || y > 5000 || x > 1000
 				|| x < -1000 || z > 1000 || z < -1000) {
 
 			this.explode();
