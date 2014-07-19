@@ -25,7 +25,7 @@ function Bomb(position, vector, world, audioMixer) {
 
 	this.parts.explosion = new THREE.Object3D();
 	var explosionMaterial = new THREE.MeshLambertMaterial({
-		color : 0xFF0000
+		color : 0xFF0000, transparent: true, opacity: 0.5
 	});
 	var explosionSphere = new THREE.SphereGeometry(this.explosionRadius,
 			this.explosionRadius, this.explosionRadius);
