@@ -93,7 +93,7 @@ Bomb.prototype.setBombEventListener = function(listener) {
 
 Bomb.prototype.explode = function() {
 	this.container.add(this.parts.explosion);
-	this.audioMixer.triggerSample(1,
+	this.audioMixer.triggerSample(5,
 			window['assets/samples/explosion-mono-s16-44100.raw'], 44100);
 	this.hasExploded = true;
 };

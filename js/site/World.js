@@ -1,7 +1,7 @@
 function World() {
 
 	var audioMixer = new jssynth_core.Mixer({
-		numChannels : 4,
+		numChannels : 8,
 		volume : 64
 	} /* global params */, {
 		volume : 128
@@ -10,8 +10,15 @@ function World() {
 	audioOut.start();
     
 	this.audioMixer = audioMixer;
-    
-	this.clock = new THREE.Clock;
+
+// ---
+// uncomment the below three lines for experimental music
+// ---
+//    this.song = jssynth_mod.readMODfile(window['assets/songs/entity.mod']);
+//    this.player = new jssynth_mod.Player(this.audioMixer);
+//    this.player.setSong(this.song);
+
+    this.clock = new THREE.Clock;
 	this.renderer = new THREE.WebGLRenderer();
 	
 	this.renderer.setSize( 1024, 600 );

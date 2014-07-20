@@ -2,7 +2,7 @@ window['assets/samples/tank-fire-mono-s16-44100.raw'] = new jssynth_core.Sample(
   name: 'tank-fire-mono-s16-44100.raw',
   bits: 16, channels: 1, signed: true,
   sampleRate: 44100, representedFreq: 44100,
-  volume: 64,
+  volume: 2048,
   repeatType: 'NON_REPEATING', repeatStart: 0, repeatEnd: 0,
   sampleLength: 74233
 }, 0);

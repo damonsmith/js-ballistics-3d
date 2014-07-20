@@ -184,7 +184,7 @@ Tank.prototype.fire = function() {
 		vector.z = (yComponent * -Math.sin(this.parts.turret.rotation.y)) * actualFiringPower;
 		var bomb = new Bomb(position, vector, this.world, this.audioMixer);
 		this.world.addObject(bomb);
-		this.audioMixer.triggerSample(0, this.fireSample, 44100);
+		this.audioMixer.triggerSample(4, this.fireSample, 44100);
 		if (this.eventListener) {
 			this.eventListener.bombFired(this, bomb);
 		}
