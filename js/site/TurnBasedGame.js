@@ -42,13 +42,15 @@ TurnBasedGame.prototype.setupGame = function() {
 	
 	this.turnEnded = true;
 	
-	var i, tank;
+	var i, tank, smoke;
 	for (i=0; i<numberOfPlayers; i++) {
 		var player = this.availablePlayerList[i];
+		var xPos = player.x + (Math.random() * 100);
+		var zPos = player.z + (Math.random() * 100);
 		
 		tank = new Tank(
-				player.x + (Math.random() * 100),
-				player.z + (Math.random() * 100), 
+				xPos,
+				zPos, 
 				this.world, 
 				this.world.audioMixer, 
 				player.name, 
@@ -145,6 +147,8 @@ TurnBasedGame.prototype.tankDestroyed = function(tank) {
 	this.tanksDestroyedList.push(tank);
 	this.tanksDestroyedThisTurn.push(tank);
 	tank.player.healthBarElement.width("100%");
+	var smoke = new Smoke(tank.container.position.x, tank.container.position.z, this.world);
+	this.world.addObject(smoke);
 };
 
 TurnBasedGame.prototype.tankDamageChanged = function(tank) {
