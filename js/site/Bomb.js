@@ -10,7 +10,7 @@ function Bomb(position, vector, world, audioMixer) {
 
 	this.explosionRadius = 15;
 	this.explosionDamage = 400;
-	this.explosionTime = 1;// seconds
+	this.explosionTime = 2;// seconds
 	this.explosionElapsedTime = 0;// seconds
 
 	var material = new THREE.MeshLambertMaterial({
@@ -24,12 +24,31 @@ function Bomb(position, vector, world, audioMixer) {
 	this.parts.body.add(mesh);
 
 	this.parts.explosion = new THREE.Object3D();
-	var explosionMaterial = new THREE.MeshLambertMaterial({
-		color : 0xFF0000, transparent: true, opacity: 0.5
-	});
+
+    this.explosionMaterial = new THREE.ShaderMaterial( {
+
+        uniforms: {
+            tExplosion: {
+                type: "t",
+                value: THREE.ImageUtils.loadTexture( 'images/explosion.png' )
+            },
+            time: { // float initialized to 0
+                type: "f",
+                value: 0.5
+            }
+        },
+        vertexShader: document.getElementById( 'explosionVertexShader' ).textContent,
+        fragmentShader: document.getElementById( 'explosionFragmentShader' ).textContent,
+        transparent: true, opacity: 0.9
+    } );
+
+
+//	var explosionMaterial = new THREE.MeshLambertMaterial({
+//		color : 0xFF0000, transparent: true, opacity: 0.5
+//	});
 	var explosionSphere = new THREE.SphereGeometry(this.explosionRadius,
-			this.explosionRadius, this.explosionRadius);
-	var explosionMesh = new THREE.Mesh(explosionSphere, explosionMaterial);
+			64, 64);
+	var explosionMesh = new THREE.Mesh(explosionSphere, this.explosionMaterial);
 	this.parts.explosion.add(explosionMesh);
 	this.parts.explosion.scale.set(0, 0, 0);
 
@@ -75,6 +94,7 @@ Bomb.prototype.step = function(delta) {
 			// scaled from 0 back up to
 			// 1. If the sphere is created very small then it doesn't scale up
 			// well.
+            this.explosionMaterial.uniforms['time'].value = 0.5 * this.explosionElapsedTime;
 			var howFarThrough = (this.explosionElapsedTime / this.explosionTime);
 			this.parts.explosion.scale.set(howFarThrough, howFarThrough,
 					howFarThrough);
