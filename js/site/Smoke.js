@@ -5,8 +5,8 @@ function Smoke(xPos, zPos, world) {
         this.smokeParticles.vertices.push(particle);
     }
     THREE.ImageUtils.crossOrigin = 'anonymous';
-    // var smokeTexture = THREE.ImageUtils.loadTexture('./images/smoke.png');
-    this.smokeMaterial = new THREE.ParticleBasicMaterial({ transparent: true, blending: THREE.AdditiveBlending, size: 0.5, color: 0x222222 });
+    var smokeTexture = THREE.ImageUtils.loadTexture('./images/smoke.png');
+    this.smokeMaterial = new THREE.ParticleBasicMaterial({ map: smokeTexture, transparent: true, blending: THREE.AdditiveBlending, size: 50, color: 0x222222 });
     this.container = new THREE.ParticleSystem(this.smokeParticles, this.smokeMaterial);
     this.container.sortParticles = true;
     this.container.position.x = xPos;
