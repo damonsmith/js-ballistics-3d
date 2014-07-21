@@ -6,6 +6,7 @@ function Controls(camera, canvas) {
 	
 	//user can't control it when this is true.
 	this.cameraIsInTransition = false;
+	this.transitionTarget = null;
 
 	this.keyboardTankControls = {
 		// Tank controls keys:
@@ -114,6 +115,19 @@ Controls.prototype.step = function(delta) {
 		this.yawObject.translateX(this.velocity.x * delta);
 		this.yawObject.translateZ(this.velocity.z * delta);
 	}
+	else {
+		deltaForTransitionTime = delta/this.transitionTarget.transitionTime;
+		this.yawObject.position.x += this.transitionTarget.amounts.x * deltaForTransitionTime;
+		this.yawObject.position.y += this.transitionTarget.amounts.y * deltaForTransitionTime;
+		this.yawObject.position.z += this.transitionTarget.amounts.z * deltaForTransitionTime;
+		this.yawObject.rotation.y += this.transitionTarget.amounts.yaw * deltaForTransitionTime;
+		this.pitchObject.rotation.x += this.transitionTarget.amounts.pitch * deltaForTransitionTime;
+		this.transitionTarget.elapsedTime += delta;
+		if (this.transitionTarget.elapsedTime > this.transitionTarget.transitionTime) {
+			this.cameraIsInTransition = false;
+			this.transitionTarget = null;
+		}
+	}
 };
 
 Controls.prototype.unselectUnit = function() {
@@ -133,10 +147,12 @@ Controls.prototype.stop = function(unit) {
 //Moves the camera to a named view like "far" or "near" from the selected unit, and rotates
 //the camera to look at that unit.
 Controls.prototype.setView = function(viewName) {
+	
 	if (this.selectedUnit) {
-		var pos = this.getPositionForView(this.selectedUnit.container.position, viewName);
-		this.yawObject.position.set(pos.x, pos.y, pos.z);
-		this.lookAt(this.selectedUnit.container);
+		this.transitionToViewOnObject(this.selectedUnit, viewName, 1);
+//		var pos = this.getPositionForView(this.selectedUnit.container.position, viewName);
+//		this.yawObject.position.set(pos.x, pos.y, pos.z);
+//		this.lookAt(this.selectedUnit);
 	} else {
 		var pos = this.getPositionForView({x: 0, y: 0, z: 0}, viewName);
 		this.yawObject.position.set(pos.x, pos.y, pos.z);
@@ -157,31 +173,71 @@ Controls.prototype.getPositionForView = function(target, viewName) {
 Controls.prototype.saveCameraView = function() {
 	return {
 		x: this.yawObject.position.x,
+		y: this.yawObject.position.y,
 		z: this.yawObject.position.z,
-		p: this.pitchObject.rotation.x,
-		y: this.yawObject.rotation.y
+		pitch: this.pitchObject.rotation.x,
+		yaw: this.yawObject.rotation.y
 	};
 };
 
 Controls.prototype.restoreCameraView = function(view) {
 	this.yawObject.position.x = view.x;
+	this.yawObject.position.y = view.y;
 	this.yawObject.position.z = view.z;
-	this.pitchObject.rotation.x = view.p;
-	this.yawObject.rotation.y = view.y;
+	this.pitchObject.rotation.x = view.pitch;
+	this.yawObject.rotation.y = view.yaw;
+};
+
+Controls.prototype.transitionToViewOnObject = function(object, viewName, timeInSeconds) {
+	if (!timeInSeconds) {
+		timeInSeconds = 0.5;
+	}
+	this.transitionTarget = {};
+	
+	var currentPosition = this.yawObject.position;
+	var endPosition = this.getPositionForView(object.container.position, viewName);
+	var currentRotation = {pitch: this.pitchObject.rotation.x, yaw: this.yawObject.rotation.y};
+	var endRotation = this.getLookAtFromPosition(object, endPosition);
+	this.transitionTarget.current = {
+		x: currentPosition.x,
+		y: currentPosition.y,
+		z: currentPosition.z,
+		pitch: currentRotation.pitch,
+		yaw: currentRotation.yaw
+	}
+	this.transitionTarget.target = {
+		x: endPosition.x,
+		y: endPosition.y,
+		z: endPosition.z,
+		pitch: endRotation.pitch,
+		yaw: endRotation.yaw
+	};
+	
+	this.transitionTarget.amounts = {
+			x: endPosition.x - currentPosition.x,
+			y: endPosition.y - currentPosition.y,
+			z: endPosition.z - currentPosition.z,
+			yaw: endRotation.yaw - currentRotation.yaw,
+			pitch: endRotation.pitch - currentRotation.pitch
+	};
+	this.transitionTarget.elapsedTime = 0;
+	this.transitionTarget.transitionTime = timeInSeconds;
+	
+	this.cameraIsInTransition = true;
 };
 
 Controls.prototype.lookAt = function(object) {
-	var angles = this.getLookAtFromPosition(object,this.yawObject.position);
-	this.yawObject.rotation.y = angles.y;
-	this.pitchObject.rotation.x = angles.p;
+	var newRotation = this.getLookAtFromPosition(object, this.yawObject.position);
+	this.yawObject.rotation.y = newRotation.yaw;
+	this.pitchObject.rotation.x = newRotation.pitch;
 };
 
 //Returns the pitch and yaw required to look at the given object from
 //the given position.
 Controls.prototype.getLookAtFromPosition = function(object, position) {
-	var dx = position.x - object.position.x;
-	var dy = object.position.y - position.y;
-	var dz = position.z - object.position.z;
+	var dx = position.x - object.container.position.x;
+	var dy = object.container.position.y - position.y;
+	var dz = position.z - object.container.position.z;
 
 	if (dx === 0) {
 		dx = 0.001;
@@ -189,8 +245,8 @@ Controls.prototype.getLookAtFromPosition = function(object, position) {
 	var yawLength = Math.sqrt((dz * dz) + (dx * dx));
 	var newYaw = Math.atan(dx / dz);
 	var newPitch = Math.atan(dy / yawLength);
-	return {y: newYaw, p: newPitch};
-}
+	return {yaw: newYaw, pitch: newPitch};
+};
 
 Controls.prototype.handleMouseDown = function(event) {
 	this.mouseDown = true;
@@ -203,20 +259,18 @@ Controls.prototype.handleMouseUp = function(event) {
 };
 
 Controls.prototype.handleMouseMove = function(event) {
-	if (!this.mouseDown) {
-		return;
+	if (this.mouseDown && !this.cameraIsInTransition) {
+		var movementX = event.movementX || event.mozMovementX
+				|| event.webkitMovementX || 0;
+		var movementY = event.movementY || event.mozMovementY
+				|| event.webkitMovementY || 0;
+		
+		this.yawObject.rotation.y -= movementX * 0.002;
+		this.pitchObject.rotation.x -= movementY * 0.002;
+		
+		this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
+		this.pitchObject.rotation.x));
 	}
-
-	var movementX = event.movementX || event.mozMovementX
-			|| event.webkitMovementX || 0;
-	var movementY = event.movementY || event.mozMovementY
-			|| event.webkitMovementY || 0;
-
-	this.yawObject.rotation.y -= movementX * 0.002;
-	this.pitchObject.rotation.x -= movementY * 0.002;
-
-	this.pitchObject.rotation.x = Math.max(-this.PI_2, Math.min(this.PI_2,
-	this.pitchObject.rotation.x));
 };
 
 Controls.prototype.handleKeyDown = function(event) {
