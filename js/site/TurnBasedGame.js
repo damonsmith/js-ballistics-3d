@@ -147,8 +147,6 @@ TurnBasedGame.prototype.tankDestroyed = function(tank) {
 	this.tanksDestroyedList.push(tank);
 	this.tanksDestroyedThisTurn.push(tank);
 	tank.player.healthBarElement.width("100%");
-	var smoke = new Smoke(tank.container.position.x, tank.container.position.z, this.world);
-	this.world.addObject(smoke);
 };
 
 TurnBasedGame.prototype.tankDamageChanged = function(tank) {

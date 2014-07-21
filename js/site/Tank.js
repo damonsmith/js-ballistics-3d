@@ -209,4 +209,6 @@ Tank.prototype.damage = function(amount) {
 
 Tank.prototype.explode = function() {
 	this.destroyed = true;
+	var smoke = new Smoke(this.container.position.x, this.container.position.z, this.world);
+	this.world.addObject(smoke);
 };
