@@ -62,9 +62,14 @@ TurnBasedGame.prototype.setupGame = function() {
 	    this.world.addObject(tank);
 	    this.tankDamageChanged(tank);
 	}
-	this.selectedTank = tank;
+	
 	$("#gameInfo").hide();
-	this.endTurn();
+	
+	//Setup the first round:
+	//	select the last tank so that it will roll to the first:
+	this.selectedTank = tank;
+	this.turnEnded = true;
+	this.startNextTurn();
 };
 
 TurnBasedGame.prototype.endTurn = function() {
@@ -73,6 +78,7 @@ TurnBasedGame.prototype.endTurn = function() {
 		this.endGame();
 	}
 	else {
+		this.selectedTank.player.currentView = this.world.controls.saveCameraView();
 		var nextPlayer = this.getNextTank().player;
 		document.getElementById("next-turn-unit-name").innerHTML = nextPlayer.name;
 		document.getElementById("turn-unit-color").style.backgroundColor = nextPlayer.color;
@@ -125,7 +131,15 @@ TurnBasedGame.prototype.startNextTurn = function() {
 		this.selectedTank = this.getNextTank();
 		this.world.controls.selectUnit(this.selectedTank);
 		this.selectedTank.canFire = true;
-		this.world.controls.setView("far");
+		
+		if (this.selectedTank.player.currentView) {
+			this.world.controls.restoreCameraView(this.selectedTank.player.currentView);
+			this.selectedTank.player.currentView = null;
+		}
+		else {
+			this.world.controls.setView("near");	
+		}
+		
 		document.getElementById("turnInfo").style.display = "none";
 		
 		this.controlPanel.selectedUnitName[0].innerHTML = this.selectedTank.name;
