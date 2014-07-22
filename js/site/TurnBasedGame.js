@@ -125,7 +125,7 @@ TurnBasedGame.prototype.startNextTurn = function() {
 		this.selectedTank = this.getNextTank();
 		this.world.controls.selectUnit(this.selectedTank);
 		this.selectedTank.canFire = true;
-		this.world.controls.setView("far");
+		this.setView("far");
 		document.getElementById("turnInfo").style.display = "none";
 		
 		this.controlPanel.selectedUnitName[0].innerHTML = this.selectedTank.name;
@@ -134,6 +134,15 @@ TurnBasedGame.prototype.startNextTurn = function() {
 		
 		this.turnEnded = false;
 	}
+};
+
+TurnBasedGame.prototype.resetView = function(viewName) {
+	this.world.controls.resetView();
+};
+
+
+TurnBasedGame.prototype.setView = function(viewName) {
+	this.world.controls.transitionToNamedViewLookingAtPosition(this.selectedTank.container.position, viewName, 1);
 };
 
 /** Tank event handlers **/

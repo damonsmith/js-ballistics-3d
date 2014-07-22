@@ -144,34 +144,11 @@ Controls.prototype.stop = function(unit) {
 	this.selectedUnit.actions = {};
 };
 
-//Moves the camera to a named view like "far" or "near" from the selected unit, and rotates
-//the camera to look at that unit.
 Controls.prototype.resetView = function() {
-	
-	if (this.selectedUnit) {
-		var pos = this.getPositionForView(this.selectedUnit.container.position, viewName);
-		this.yawObject.position.set(pos.x, pos.y, pos.z);
-		this.lookAt(this.selectedUnit.container.position);
-	} else {
-		var target = {x: 0, y: 0, z: 0};
-		var pos = this.getPositionForView(target, viewName);
-		this.yawObject.position.set(pos.x, pos.y, pos.z);
-		this.lookAt(target);
-	}
-};
-
-//Moves the camera to a named view like "far" or "near" from the selected unit, and rotates
-//the camera to look at that unit.
-Controls.prototype.setView = function(viewName) {
-	
-	if (this.selectedUnit) {
-		this.transitionToNamedViewLookingAtPosition(this.selectedUnit.container.position, viewName, 1);
-	} else {
-		var target = {x: 0, y: 0, z: 0};
-		var pos = this.getPositionForView(target, viewName);
-		this.yawObject.position.set(pos.x, pos.y, pos.z);
-		this.lookAt(target);
-	}
+	var target = {x: 0, y: 0, z: 0};
+	var pos = this.getPositionForView(target, "far");
+	this.yawObject.position.set(pos.x, pos.y, pos.z);
+	this.lookAt(target);
 };
 
 //Returns the x,y,z coordinates that the camera should be in to get a named view on a position.
