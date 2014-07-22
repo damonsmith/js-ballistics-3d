@@ -25,12 +25,13 @@ function Bomb(position, vector, world, audioMixer) {
 
 	this.parts.explosion = new THREE.Object3D();
 
+    THREE.ImageUtils.crossOrigin = 'anonymous';
     this.explosionMaterial = new THREE.ShaderMaterial( {
 
         uniforms: {
             tExplosion: {
                 type: "t",
-                value: THREE.ImageUtils.loadTexture( 'images/explosion.png' )
+                value: THREE.ImageUtils.loadTexture( './images/explosion.png' )
             },
             time: { // float initialized to 0
                 type: "f",
@@ -39,15 +40,12 @@ function Bomb(position, vector, world, audioMixer) {
         },
         vertexShader: document.getElementById( 'explosionVertexShader' ).textContent,
         fragmentShader: document.getElementById( 'explosionFragmentShader' ).textContent,
-        transparent: true, opacity: 0.9
+        transparent: true
     } );
 
 
-//	var explosionMaterial = new THREE.MeshLambertMaterial({
-//		color : 0xFF0000, transparent: true, opacity: 0.5
-//	});
-	var explosionSphere = new THREE.SphereGeometry(this.explosionRadius,
-			64, 64);
+
+    var explosionSphere = new THREE.IcosahedronGeometry(this.explosionRadius, 4);
 	var explosionMesh = new THREE.Mesh(explosionSphere, this.explosionMaterial);
 	this.parts.explosion.add(explosionMesh);
 	this.parts.explosion.scale.set(0, 0, 0);
