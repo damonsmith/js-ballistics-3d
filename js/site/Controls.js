@@ -146,17 +146,31 @@ Controls.prototype.stop = function(unit) {
 
 //Moves the camera to a named view like "far" or "near" from the selected unit, and rotates
 //the camera to look at that unit.
+Controls.prototype.resetView = function() {
+	
+	if (this.selectedUnit) {
+		var pos = this.getPositionForView(this.selectedUnit.container.position, viewName);
+		this.yawObject.position.set(pos.x, pos.y, pos.z);
+		this.lookAt(this.selectedUnit.container.position);
+	} else {
+		var target = {x: 0, y: 0, z: 0};
+		var pos = this.getPositionForView(target, viewName);
+		this.yawObject.position.set(pos.x, pos.y, pos.z);
+		this.lookAt(target);
+	}
+};
+
+//Moves the camera to a named view like "far" or "near" from the selected unit, and rotates
+//the camera to look at that unit.
 Controls.prototype.setView = function(viewName) {
 	
 	if (this.selectedUnit) {
-		this.transitionToViewOnObject(this.selectedUnit, viewName, 1);
-//		var pos = this.getPositionForView(this.selectedUnit.container.position, viewName);
-//		this.yawObject.position.set(pos.x, pos.y, pos.z);
-//		this.lookAt(this.selectedUnit);
+		this.transitionToNamedViewLookingAtPosition(this.selectedUnit.container.position, viewName, 1);
 	} else {
-		var pos = this.getPositionForView({x: 0, y: 0, z: 0}, viewName);
+		var target = {x: 0, y: 0, z: 0};
+		var pos = this.getPositionForView(target, viewName);
 		this.yawObject.position.set(pos.x, pos.y, pos.z);
-		//TODO it should look at something here too.
+		this.lookAt(target);
 	}
 };
 
@@ -188,23 +202,23 @@ Controls.prototype.restoreCameraView = function(view) {
 	this.yawObject.rotation.y = view.yaw;
 };
 
-Controls.prototype.transitionToViewOnObject = function(object, viewName, timeInSeconds) {
+Controls.prototype.transitionToNamedViewLookingAtPosition = function(lookAtPosition, viewName, timeInSeconds) {
 	if (!timeInSeconds) {
 		timeInSeconds = 0.5;
 	}
 	this.transitionTarget = {};
 	
 	var currentPosition = this.yawObject.position;
-	var endPosition = this.getPositionForView(object.container.position, viewName);
+	var endPosition = this.getPositionForView(lookAtPosition, viewName);
 	var currentRotation = {pitch: this.pitchObject.rotation.x, yaw: this.yawObject.rotation.y};
-	var endRotation = this.getLookAtFromPosition(object, endPosition);
+	var endRotation = this.getLookAtFromPosition(lookAtPosition, endPosition);
 	this.transitionTarget.current = {
 		x: currentPosition.x,
 		y: currentPosition.y,
 		z: currentPosition.z,
 		pitch: currentRotation.pitch,
 		yaw: currentRotation.yaw
-	}
+	};
 	this.transitionTarget.target = {
 		x: endPosition.x,
 		y: endPosition.y,
@@ -226,18 +240,18 @@ Controls.prototype.transitionToViewOnObject = function(object, viewName, timeInS
 	this.cameraIsInTransition = true;
 };
 
-Controls.prototype.lookAt = function(object) {
-	var newRotation = this.getLookAtFromPosition(object, this.yawObject.position);
+Controls.prototype.lookAt = function(lookAtPosition) {
+	var newRotation = this.getLookAtFromPosition(lookAtPosition, this.yawObject.position);
 	this.yawObject.rotation.y = newRotation.yaw;
 	this.pitchObject.rotation.x = newRotation.pitch;
 };
 
 //Returns the pitch and yaw required to look at the given object from
 //the given position.
-Controls.prototype.getLookAtFromPosition = function(object, position) {
-	var dx = position.x - object.container.position.x;
-	var dy = object.container.position.y - position.y;
-	var dz = position.z - object.container.position.z;
+Controls.prototype.getLookAtFromPosition = function(lookAtPosition, position) {
+	var dx = position.x - lookAtPosition.x;
+	var dy = lookAtPosition.y - position.y;
+	var dz = position.z - lookAtPosition.z;
 
 	if (dx === 0) {
 		dx = 0.001;
