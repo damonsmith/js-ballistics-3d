@@ -18,8 +18,10 @@ Smoke.prototype.step = function(delta) {
     var particleCount = this.smokeParticles.vertices.length;
     while (particleCount--) {
         var particle = this.smokeParticles.vertices[particleCount];
-        particle.y += delta * 50;
-     
+        particle.y += delta * 25;
+        particle.x += (Math.random() * 2) - 1;
+        particle.z += (Math.random() * 2) - 1;
+
         if (particle.y >= 230) {
             particle.y = Math.random() * 16;
             particle.x = Math.random() * 32 - 16;
