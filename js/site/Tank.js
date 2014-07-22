@@ -42,7 +42,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
     this.damagedColor = {
         body : "000000",
         gunTip : "000000" 
-    }
+    };
 
 	this.colorScheme = this.tankColors[color];
 

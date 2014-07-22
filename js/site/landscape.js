@@ -12,7 +12,7 @@
         this.xpoints = dimension;
         this.ypoints = dimension;
         this.points = this.initialisePoints();
-    }
+    };
 
     window.game.scenery.Landscape.prototype.initialisePoints = function() {
         var result = new Array(this.xpoints);
@@ -28,7 +28,7 @@
         result[this.xpoints-1][0]=DEFAULT_CORNER_HEIGHT;
         result[this.xpoints-1][this.ypoints-1]=DEFAULT_CORNER_HEIGHT;
         return result;
-    }
+    };
 
 
     window.game.scenery.Landscape.prototype.terraform = function() {

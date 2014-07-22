@@ -54,7 +54,7 @@ function World() {
     var self = this;
     this.renderFunction = function() {
     	self.render();
-    }
+    };
     
     this.start();
     
