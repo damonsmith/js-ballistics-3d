@@ -79,6 +79,7 @@ body,header,h1,h2,h3,h4,h5 {
 }
 
 .red {background-color: red;}
+.darkred {background-color: #330000;}
 .yellow {background-color: yellow;}
 .blue {background-color: blue;}
 .green {background-color: green;}
