@@ -1,5 +1,7 @@
 function World() {
-
+	if (document.location.hash.contains("disableShaders")) {
+		MaterialLibrary.getInstance().disableShaders();
+	}
 	var audioMixer = new jssynth_core.Mixer({
 		numChannels : 8,
 		volume : 64

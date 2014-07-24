@@ -25,22 +25,7 @@ function Bomb(position, vector, world, audioMixer) {
 
 	this.parts.explosion = new THREE.Object3D();
 
-    this.explosionMaterial = new THREE.ShaderMaterial( {
-
-        uniforms: {
-            tExplosion: {
-                type: "t",
-                value: THREE.ImageUtils.loadTexture( 'images/explosion.png' )
-            },
-            time: { // float initialized to 0
-                type: "f",
-                value: 0.5
-            }
-        },
-        vertexShader: document.getElementById( 'explosionVertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'explosionFragmentShader' ).textContent,
-        transparent: true, opacity: 0.9
-    } );
+    this.explosionMaterial = MaterialLibrary.getInstance().getExplosion();
 
 
 //	var explosionMaterial = new THREE.MeshLambertMaterial({
@@ -94,7 +79,9 @@ Bomb.prototype.step = function(delta) {
 			// scaled from 0 back up to
 			// 1. If the sphere is created very small then it doesn't scale up
 			// well.
-            this.explosionMaterial.uniforms['time'].value = 0.5 * this.explosionElapsedTime;
+            if (this.explosionMaterial.uniforms && this.explosionMaterial.uniforms.time) {
+				this.explosionMaterial.uniforms['time'].value = 0.5 * this.explosionElapsedTime;            	
+            }
 			var howFarThrough = (this.explosionElapsedTime / this.explosionTime);
 			this.parts.explosion.scale.set(howFarThrough, howFarThrough,
 					howFarThrough);
