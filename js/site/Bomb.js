@@ -70,6 +70,8 @@ Bomb.prototype.step = function(delta) {
 		this.explosionElapsedTime += delta;
 
 		if (this.explosionElapsedTime > this.explosionTime) {
+			this.modifyLandscape(this.container.position.x,
+					this.container.position.z, this.explosionRadius);
 			this.applyDamage();
 			this.eventListener.bombLanded(this, this.container.position.x,
 					this.container.position.z, this.explosionRadius);
@@ -100,9 +102,23 @@ Bomb.prototype.setBombEventListener = function(listener) {
 
 Bomb.prototype.explode = function() {
 	this.container.add(this.parts.explosion);
+	
 	this.audioMixer.triggerSample(5,
 			window['assets/samples/explosion-mono-s16-44100.raw'], 44100);
 	this.hasExploded = true;
+};
+
+Bomb.prototype.modifyLandscape = function(x, z, radius) {
+	var i, j;
+	x = Math.floor(x);
+	z = Math.floor(z);
+	for (i=Math.floor(-radius); i<radius; i++) {
+		for (j=Math.floor(-radius); j<radius; j++) {
+			var currentElevation = this.world.landscape.getElevation(x + i, z + j);
+			this.world.landscape.setElevation(x + i, z + j, currentElevation - (30 - (Math.abs(i) + Math.abs(j))));
+		}
+	}
+	this.world.updateLandscape();
 };
 
 Bomb.prototype.applyDamage = function() {

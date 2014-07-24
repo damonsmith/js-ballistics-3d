@@ -56,7 +56,7 @@ function World() {
     var self = this;
     this.renderFunction = function() {
     	self.render();
-    }
+    };
     
     this.start();
     
@@ -83,8 +83,16 @@ World.prototype.setupLandscape = function() {
     console.log(".. terraforming done. ");
     
     this.landscapeModel = new THREE.Object3D();
-    this.landscapeModel.add(this.landscape.getMesh());
+    this.landscapeMesh = this.landscape.getMesh();
+    this.landscapeModel.add(this.landscapeMesh);
     this.scene.add( this.landscapeModel );
+};
+
+World.prototype.updateLandscape = function() {
+	this.landscapeModel.remove(this.landscapeMesh);
+	this.landscapeMesh = this.landscape.getMesh();
+	this.landscapeModel.add(this.landscapeMesh);
+	
 };
 
 World.prototype.start = function() {

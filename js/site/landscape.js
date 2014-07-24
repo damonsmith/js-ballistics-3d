@@ -12,7 +12,7 @@
         this.xpoints = dimension;
         this.ypoints = dimension;
         this.points = this.initialisePoints();
-    }
+    };
 
     window.game.scenery.Landscape.prototype.initialisePoints = function() {
         var result = new Array(this.xpoints);
@@ -28,12 +28,11 @@
         result[this.xpoints-1][0]=DEFAULT_CORNER_HEIGHT;
         result[this.xpoints-1][this.ypoints-1]=DEFAULT_CORNER_HEIGHT;
         return result;
-    }
-
-
+    };
+    
     window.game.scenery.Landscape.prototype.terraform = function() {
         this.diamondSquare(0,0,this.xpoints,this.ypoints,START_VARIANCE,Math.floor(this.xpoints / 2));
-    }
+    };
 
     window.game.scenery.Landscape.prototype.diamondSquare = function(x1,y1,x2,y2,variance,level) {
         var a, b, c, d, e, f, g, i, j, l2 = Math.floor(level/2);
@@ -80,6 +79,8 @@
                 /* surfaceGeometry.faceVertexUvs[0].push([new THREE.Vector2(x/this.xpoints, y/this.ypoints)]); */
             }
         }
+        
+        
         for (var x = 0 ; x < (this.xpoints-1); x++) {
             for (var y = 0; y < (this.ypoints-1); y++) {
                 var xy = (y*this.xpoints)+x;
@@ -92,8 +93,9 @@
 //        var material = new THREE.MeshPhongMaterial( { ambient: 0x403030, color: 0xdddddd, specular: 0x262320, shininess: 5, shading: THREE.SmoothShading });
         var material = new THREE.MeshLambertMaterial({color: 0xcccccc, ambient: 0x303030, emissive: 0x000200, shading: THREE.SmoothShading});
         var mesh = new THREE.Mesh( surfaceGeometry, material );
-        mesh.position.y = 0;
-        return mesh;
+        mesh.geometry.dynamic = true;
+        mesh.position.y = 0;	
+		return mesh;        
     };
     
     window.game.scenery.Landscape.prototype.getElevation = function(x, z) {
@@ -106,6 +108,16 @@
             altitude = 0;
         }
         return altitude;
-    }
+    };
+    
+    window.game.scenery.Landscape.prototype.setElevation = function(x, z, newElevation) {
+    	var xPoints, altitude = 0;
+    	xPoints = this.points[Math.floor(x + (this.xpoints /2))];
+    	if (xPoints) {
+    		xPoints[Math.floor(z + (this.ypoints / 2))] = newElevation;
+    	}
+    };
+
+    
     
 })(window, THREE);
