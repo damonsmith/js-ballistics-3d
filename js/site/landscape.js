@@ -66,17 +66,60 @@
         this.diamondSquare(x1, y1, x2, y2, variance / 2, l2);
     };
 
+
+
+    /* this function basically defines a hemispherical hole of radius sqrt(r2) - returning the depth at point (x,y) */
+    window.game.scenery.Landscape.prototype.getIndentDepth = function(x,y,r2) {
+        var craterDepthScale = 1.5;
+        var t = x*x+y*y;
+        if ((r2 - t) > 0) { /* inside circle */
+            return Math.sqrt(r2 - t) * craterDepthScale;
+        } else {
+            return 0;
+        }
+    }
+
+    window.game.scenery.Landscape.prototype.indent = function(x,y,radius) {
+        var i, j, r2 = radius * radius;
+        x = Math.floor(x);
+        y = Math.floor(y);
+
+        var realX = Math.floor(x + (this.xpoints /2));
+        var realY = Math.floor(y + (this.ypoints /2));
+
+        for (i=Math.floor(-radius); i<radius; i++) {
+            for (j=Math.floor(-radius); j<radius; j++) {
+                this.setElevation(x+i, y+j, this.getElevation(x+i,y+j) - this.getIndentDepth(i, j, r2));
+                this.updateVerticeAt(realX+i,realY+j);
+            }
+        }
+        this.surfaceGeometry.verticesNeedUpdate=true;
+        this.surfaceGeometry.normalsNeedUpdate=true;
+        this.surfaceGeometry.tangentsNeedUpdate = true;
+        this.surfaceGeometry.dynamic=true;
+    }
+
+    window.game.scenery.Landscape.prototype.updateVerticeAt = function(x,z) {
+        var height = this.points[x][z];
+        this.surfaceGeometry.vertices[x*this.ypoints + z].y = (height < 0) ? 0 : height;
+    }
+
+    window.game.scenery.Landscape.prototype.setVerticeAt = function(x,z) {
+        var height = this.points[x][z];
+        if (height < 0) {
+            height = 0;
+        }
+        this.surfaceGeometry.vertices[x*this.ypoints + z] =
+            new THREE.Vector3(x-(this.xpoints/2),height,z-(this.ypoints/2));
+    }
+
     window.game.scenery.Landscape.prototype.getMesh = function() {
         /* landscape gets built on the XZ plane, with Y corresponding to height */
-        var surfaceGeometry = new THREE.Geometry();
+        this.surfaceGeometry = new THREE.Geometry();
+        this.surfaceGeometry.dynamic=true;
         for (var x = 0 ; x < this.xpoints; x++) {
             for (var y = 0; y < this.ypoints; y++) {
-                var height = this.points[x][y];
-                if (height < 0) {
-                    height = 0;
-                }
-                surfaceGeometry.vertices.push(new THREE.Vector3(x-(this.xpoints/2),height,y-(this.ypoints/2)));
-                /* surfaceGeometry.faceVertexUvs[0].push([new THREE.Vector2(x/this.xpoints, y/this.ypoints)]); */
+                this.setVerticeAt(x,y);
             }
         }
         
@@ -84,15 +127,15 @@
         for (var x = 0 ; x < (this.xpoints-1); x++) {
             for (var y = 0; y < (this.ypoints-1); y++) {
                 var xy = (y*this.xpoints)+x;
-                surfaceGeometry.faces.push(new THREE.Face3(xy,xy+1,xy+1+this.xpoints));
-                surfaceGeometry.faces.push(new THREE.Face3(xy,xy+1+this.xpoints,xy+this.xpoints));
+                this.surfaceGeometry.faces.push(new THREE.Face3(xy,xy+1,xy+1+this.xpoints));
+                this.surfaceGeometry.faces.push(new THREE.Face3(xy,xy+1+this.xpoints,xy+this.xpoints));
             }
         }
-        surfaceGeometry.computeFaceNormals();
-        surfaceGeometry.computeVertexNormals();
+        this.surfaceGeometry.computeFaceNormals();
+        this.surfaceGeometry.computeVertexNormals();
 //        var material = new THREE.MeshPhongMaterial( { ambient: 0x403030, color: 0xdddddd, specular: 0x262320, shininess: 5, shading: THREE.SmoothShading });
         var material = new THREE.MeshLambertMaterial({color: 0xcccccc, ambient: 0x303030, emissive: 0x000200, shading: THREE.SmoothShading});
-        var mesh = new THREE.Mesh( surfaceGeometry, material );
+        var mesh = new THREE.Mesh( this.surfaceGeometry, material );
         mesh.geometry.dynamic = true;
         mesh.position.y = 0;	
 		return mesh;        
@@ -114,7 +157,7 @@
     	var xPoints, altitude = 0;
     	xPoints = this.points[Math.floor(x + (this.xpoints /2))];
     	if (xPoints) {
-    		xPoints[Math.floor(z + (this.ypoints / 2))] = newElevation;
+    		xPoints[Math.floor(z + (this.ypoints / 2))] = Math.max(0, newElevation);
     	}
     };
 

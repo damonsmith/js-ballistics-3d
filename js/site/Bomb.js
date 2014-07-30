@@ -1,3 +1,4 @@
+
 function Bomb(position, vector, world, audioMixer) {
 
 	this.hasExploded = false;
@@ -8,7 +9,7 @@ function Bomb(position, vector, world, audioMixer) {
 
 	this.vector = vector;
 
-	this.explosionRadius = 15;
+    this.explosionRadius = 15;
 	this.explosionDamage = 400;
 	this.explosionTime = 2;// seconds
 	this.explosionElapsedTime = 0;// seconds
@@ -112,13 +113,8 @@ Bomb.prototype.modifyLandscape = function(x, z, radius) {
 	var i, j;
 	x = Math.floor(x);
 	z = Math.floor(z);
-	for (i=Math.floor(-radius); i<radius; i++) {
-		for (j=Math.floor(-radius); j<radius; j++) {
-			var currentElevation = this.world.landscape.getElevation(x + i, z + j);
-			this.world.landscape.setElevation(x + i, z + j, currentElevation - (30 - (Math.abs(i) + Math.abs(j))));
-		}
-	}
-	this.world.updateLandscape();
+
+    this.world.landscape.indent(x,z,radius);
 };
 
 Bomb.prototype.applyDamage = function() {
