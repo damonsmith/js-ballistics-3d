@@ -153,6 +153,16 @@ TurnBasedGame.prototype.startNextTurn = function() {
 	}
 };
 
+TurnBasedGame.prototype.anyTanksAreCurrentlyFalling = function() {
+	var i;
+	for (i=0; i<this.tanks.length; i++) {
+		if (this.tanks[i].falling) {
+			return true;
+		}
+	};
+	return false;
+};
+
 /** Tank event handlers **/
 TurnBasedGame.prototype.bombFired = function(tank, bomb) {
 	tank.canFire = false;
@@ -171,6 +181,16 @@ TurnBasedGame.prototype.tankDamageChanged = function(tank) {
 	tank.player.healthBarElement.width(Math.ceil(percentageLost) + "%");
 };
 
+TurnBasedGame.prototype.tankHitTheGround = function(tank) {
+	if (!this.anyTanksAreCurrentlyFalling()) {
+		console.debug("all tanks hit the ground, ending turn");
+		this.endTurn();	
+	}
+	else {
+		console.debug("waiting for more tanks to hit the ground");
+	}
+};
+
 TurnBasedGame.prototype.firingPowerChanged = function(power) {
 	this.controlPanel.firingPower[0].innerHTML = power;
 };
@@ -187,7 +207,12 @@ TurnBasedGame.prototype.yAngleChanged = function(angle) {
 
 /** Bomb event handlers **/
 TurnBasedGame.prototype.bombLanded = function(bomb) {
-	this.endTurn();
+	if (!this.anyTanksAreCurrentlyFalling()) {
+		this.endTurn();	
+	}
+	else {
+		console.debug("waiting for tanks to hit the ground");
+	}
 };
 
 /** end Bomb event handlers **/

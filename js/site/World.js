@@ -92,7 +92,11 @@ World.prototype.updateLandscape = function() {
 	this.landscapeModel.remove(this.landscapeMesh);
 	this.landscapeMesh = this.landscape.getMesh();
 	this.landscapeModel.add(this.landscapeMesh);
-	
+	for (var i=0; i<this.objects.length; i++) {
+    	if (this.objects[i].groundChanged) {
+    		this.objects[i].groundChanged();	
+    	}
+    }
 };
 
 World.prototype.start = function() {

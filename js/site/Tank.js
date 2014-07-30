@@ -42,7 +42,7 @@ function Tank(xPos, zPos, world, audioMixer, name, color) {
     this.damagedColor = {
         body : "000000",
         gunTip : "000000" 
-    }
+    };
 
 	this.colorScheme = this.tankColors[color];
 
@@ -133,7 +133,20 @@ Tank.prototype.endAction = function(name) {
 };
 
 Tank.prototype.step = function(delta) {
-	if (this.canFire) {
+	if (this.falling) {
+		if (this.container.position.y <= this.newElevation) {
+			this.container.position.y = this.newElevation;
+			this.damage(this.fallingVelocity);
+			console.debug("damaging by: " + this.fallingVelocity);
+			this.falling = false;
+			this.eventListener.tankHitTheGround(this);
+		}
+		else {
+			this.container.position.y -= this.fallingVelocity;
+			this.fallingVelocity += delta * 9.8;	
+		}
+	}
+	else if (this.canFire) {
 		if (this.actions.up) {
 			this.parts.gun.rotation.z += delta;
 			this.eventListener.xAngleChanged(this.parts.gun.rotation.z);
@@ -163,7 +176,17 @@ Tank.prototype.step = function(delta) {
 			}
 		}	
 	}
-}
+};
+
+Tank.prototype.groundChanged = function() {
+	var newElevation = 1 + this.world.landscape.getElevation(this.container.position.x, this.container.position.z);
+	if (newElevation != this.container.position.y) {
+		this.falling = true;
+		this.newElevation = newElevation;
+		this.fallingVelocity = 0;
+		console.debug("falling by: " + (this.container.position.y - this.newElevation));
+	}
+};
 
 Tank.prototype.radToDeg = function(radians) {
 	return (radians * (180 / Math.PI)).toFixed(1);
