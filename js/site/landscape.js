@@ -79,6 +79,69 @@
         }
     }
 
+    window.game.scenery.Landscape.prototype.computeFaceAndVertexNormals = function(geometry,a,b) {
+        var _self = this;
+        var x, y, f, index;
+        var cb = new THREE.Vector3(), ab = new THREE.Vector3();
+        var modifiedFaces = [], vertexNormals = [];
+        function getFaceIndexAt(xp,yp) {
+            //return xp*(_self.ypoints-1)*2 + 2*yp;
+            return yp*(_self.xpoints-1)*2 + 2*xp;
+        }
+        for (x = a[0]; x<b[0]; x++) {
+            for (y = a[1]; y<b[1];y++) {
+                // each "square" face is made of two triangles, so iterate
+                for (f=0; f<=1; f++) {
+                    index = getFaceIndexAt(x,y)+f;
+                    var face = geometry.faces[index];
+                    modifiedFaces.push(face);
+                    var vA = geometry.vertices[ face.a ];
+                    var vB = geometry.vertices[ face.b ];
+                    var vC = geometry.vertices[ face.c ];
+                    cb.subVectors( vC, vB );
+                    ab.subVectors( vA, vB );
+                    cb.cross( ab );
+                    cb.normalize();
+                    face.normal.copy( cb );
+                }
+            }
+        }
+
+        // vertices will be sparsely populated
+        vertexNormals = [];
+
+        /* vertex normal calculation */
+        (function() {
+            var v, vl, fl;
+
+
+            modifiedFaces.forEach(function(face) {
+                vertexNormals[face.a] = vertexNormals[face.a] || new THREE.Vector3();
+                vertexNormals[face.b] = vertexNormals[face.b] || new THREE.Vector3();
+                vertexNormals[face.c] = vertexNormals[face.c] || new THREE.Vector3();
+            }, this);
+
+            modifiedFaces.forEach(function(face) {
+                vertexNormals[face.a].add(face.normal);
+                vertexNormals[face.b].add(face.normal);
+                vertexNormals[face.c].add(face.normal);
+            }, this);
+
+            modifiedFaces.forEach(function(face) {
+                vertexNormals[face.a].normalize();
+                vertexNormals[face.b].normalize();
+                vertexNormals[face.c].normalize();
+            }, this);
+
+            modifiedFaces.forEach(function(face) {
+                face.vertexNormals[0] = vertexNormals[face.a].clone();
+                face.vertexNormals[1] = vertexNormals[face.b].clone();
+                face.vertexNormals[2] = vertexNormals[face.c].clone();
+            }, this);
+
+        })();
+    };
+
     window.game.scenery.Landscape.prototype.indent = function(x,y,radius) {
         var i, j, r2 = radius * radius;
         x = Math.floor(x);
@@ -93,6 +156,7 @@
                 this.updateVerticeAt(realX+i,realY+j);
             }
         }
+        this.computeFaceAndVertexNormals(this.surfaceGeometry, [realX-radius, realY-radius], [realX+radius, realY+radius]);
         this.surfaceGeometry.verticesNeedUpdate=true;
         this.surfaceGeometry.normalsNeedUpdate=true;
         this.surfaceGeometry.tangentsNeedUpdate = true;
