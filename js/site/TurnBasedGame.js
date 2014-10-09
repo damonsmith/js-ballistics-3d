@@ -22,6 +22,7 @@ TurnBasedGame = function() {
 	
 	
 	$("#gameInfo").show();
+	$("#keyControls").show();
 };
 
 TurnBasedGame.prototype.setupGame = function() {
@@ -64,6 +65,7 @@ TurnBasedGame.prototype.setupGame = function() {
 	}
 	
 	$("#gameInfo").hide();
+	$("#keyControls").hide();
 	
 	//Setup the first round:
 	//	select the last tank so that it will roll to the first:
@@ -110,6 +112,7 @@ TurnBasedGame.prototype.endGame = function() {
 TurnBasedGame.prototype.restart = function() {
 	$("#endGameInfo").hide();
 	$("#gameInfo").show();
+	$("#keyControls").show();
 	
 };
 

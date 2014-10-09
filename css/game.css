@@ -42,10 +42,27 @@ body,header,h1,h2,h3,h4,h5 {
 	display: none;
 	position: absolute;
 	width: 600px;
-	height: 400px;
+	height: 130px;
 	left: 212px;
 	top: 100px;
 	background-color: #666;
+}
+
+.key-controls {
+	position: absolute;
+	width: 600px;
+	height: 270px;
+	left: 212px;
+	top: 230px;
+	background-color: #444;
+	padding-top: 22px;
+}
+
+.key-controls .all-keys {
+	width: 550px;
+	display: block;
+    margin: auto;
+    width: 550px;
 }
 
 .turn-info {
@@ -111,13 +128,6 @@ body,header,h1,h2,h3,h4,h5 {
 button, select {
 	background-color: #444;
 	border-radius: 0.3rem;
-}
-
-.game-info .all-keys {
-	width: 550px;
-	display: block;
-    margin: auto;
-    width: 550px;
 }
 
 fieldset {

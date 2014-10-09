@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tank Ballistics</title>
+<title>Artillery Time</title>
 <link rel="stylesheet" href="./css/game.css" />
 <script src="./js/vendor/jquery-1.11.0.min.js"></script>
 <script src="./js/vendor/three.js"></script>
@@ -265,18 +265,19 @@
 	<div id="gameInfo" class="game-info">
 		<h1>ARTILLERY</h1>
 		<hr />
-		<p>Number of players: 
-		<select id="numberOfPlayers">
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-		</select> 
-		
-		<button onclick="TurnBasedGame.instance.setupGame()">Start game</button>		
-		
-		</p>
+		<span id="gameStartControls">
+			<p>Number of players: 
+				<select id="numberOfPlayers">
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+				</select> 
+				<button onclick="TurnBasedGame.instance.setupGame()">Start game</button>		
+			</p>
+		</span>
+	</div>
+	<div id="keyControls" class="key-controls">
 		<img class="all-keys" src="images/icons/all-keys.svg"/>
-		
 	</div>
 	
 	<div id="turnInfo" class="turn-info">

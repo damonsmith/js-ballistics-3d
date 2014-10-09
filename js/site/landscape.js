@@ -14,6 +14,10 @@
         this.points = this.initialisePoints();
     };
 
+	window.game.scenery.Landscape.prototype.isInBounds = function(x, y) {
+		return (x >= 0) && (y >= 0) && (x < this.xpoints) && (y < this.ypoints);
+	}
+
     window.game.scenery.Landscape.prototype.initialisePoints = function() {
         var result = new Array(this.xpoints);
         for (var x = 0; x < this.xpoints; x++) {
@@ -78,68 +82,73 @@
             return 0;
         }
     }
+    
+    window.game.scenery.Landscape.prototype.getFaceIndexAt = function(xp, yp) {
+    	return yp*(this.xpoints-1)*2 + 2*xp;
+    }
 
     window.game.scenery.Landscape.prototype.computeFaceAndVertexNormals = function(geometry,a,b) {
-        var _self = this;
-        var x, y, f, index;
-        var cb = new THREE.Vector3(), ab = new THREE.Vector3();
-        var modifiedFaces = [], vertexNormals = [];
-        function getFaceIndexAt(xp,yp) {
-            //return xp*(_self.ypoints-1)*2 + 2*yp;
-            return yp*(_self.xpoints-1)*2 + 2*xp;
-        }
-        for (x = a[0]; x<b[0]; x++) {
-            for (y = a[1]; y<b[1];y++) {
-                // each "square" face is made of two triangles, so iterate
-                for (f=0; f<=1; f++) {
-                    index = getFaceIndexAt(x,y)+f;
-                    var face = geometry.faces[index];
-                    modifiedFaces.push(face);
-                    var vA = geometry.vertices[ face.a ];
-                    var vB = geometry.vertices[ face.b ];
-                    var vC = geometry.vertices[ face.c ];
-                    cb.subVectors( vC, vB );
-                    ab.subVectors( vA, vB );
-                    cb.cross( ab );
-                    cb.normalize();
-                    face.normal.copy( cb );
-                }
-            }
-        }
+    	
+    	if (this.isInBounds(a[0], a[1]) && this.isInBounds(b[0], b[1])) {
+    		
+	        var _self = this;
+	        var x, y, f, index;
+	        var cb = new THREE.Vector3(), ab = new THREE.Vector3();
+	        var modifiedFaces = [], vertexNormals = [];
 
-        // vertices will be sparsely populated
-        vertexNormals = [];
-
-        /* vertex normal calculation */
-        (function() {
-            var v, vl, fl;
-
-
-            modifiedFaces.forEach(function(face) {
-                vertexNormals[face.a] = vertexNormals[face.a] || new THREE.Vector3();
-                vertexNormals[face.b] = vertexNormals[face.b] || new THREE.Vector3();
-                vertexNormals[face.c] = vertexNormals[face.c] || new THREE.Vector3();
-            }, this);
-
-            modifiedFaces.forEach(function(face) {
-                vertexNormals[face.a].add(face.normal);
-                vertexNormals[face.b].add(face.normal);
-                vertexNormals[face.c].add(face.normal);
-            }, this);
-
-            modifiedFaces.forEach(function(face) {
-                vertexNormals[face.a].normalize();
-                vertexNormals[face.b].normalize();
-                vertexNormals[face.c].normalize();
-            }, this);
-
-            modifiedFaces.forEach(function(face) {
-                face.vertexNormals[0] = vertexNormals[face.a].clone();
-                face.vertexNormals[1] = vertexNormals[face.b].clone();
-                face.vertexNormals[2] = vertexNormals[face.c].clone();
-            }, this);
-
-        })();
+	        for (x = a[0]; x<b[0]; x++) {
+	            for (y = a[1]; y<b[1];y++) {
+	                // each "square" face is made of two triangles, so iterate
+	                for (f=0; f<=1; f++) {
+	                    index = this.getFaceIndexAt(x,y)+f;
+	                    var face = geometry.faces[index];
+	                    modifiedFaces.push(face);
+	                    var vA = geometry.vertices[ face.a ];
+	                    var vB = geometry.vertices[ face.b ];
+	                    var vC = geometry.vertices[ face.c ];
+	                    cb.subVectors( vC, vB );
+	                    ab.subVectors( vA, vB );
+	                    cb.cross( ab );
+	                    cb.normalize();
+	                    face.normal.copy( cb );
+	                }
+	            }
+	        }
+	
+	        // vertices will be sparsely populated
+	        vertexNormals = [];
+	
+	        /* vertex normal calculation */
+	        (function() {
+	            var v, vl, fl;
+	
+	
+	            modifiedFaces.forEach(function(face) {
+	                vertexNormals[face.a] = vertexNormals[face.a] || new THREE.Vector3();
+	                vertexNormals[face.b] = vertexNormals[face.b] || new THREE.Vector3();
+	                vertexNormals[face.c] = vertexNormals[face.c] || new THREE.Vector3();
+	            }, this);
+	
+	            modifiedFaces.forEach(function(face) {
+	                vertexNormals[face.a].add(face.normal);
+	                vertexNormals[face.b].add(face.normal);
+	                vertexNormals[face.c].add(face.normal);
+	            }, this);
+	
+	            modifiedFaces.forEach(function(face) {
+	                vertexNormals[face.a].normalize();
+	                vertexNormals[face.b].normalize();
+	                vertexNormals[face.c].normalize();
+	            }, this);
+	
+	            modifiedFaces.forEach(function(face) {
+	                face.vertexNormals[0] = vertexNormals[face.a].clone();
+	                face.vertexNormals[1] = vertexNormals[face.b].clone();
+	                face.vertexNormals[2] = vertexNormals[face.c].clone();
+	            }, this);
+	
+	        })();
+	    }
     };
 
     window.game.scenery.Landscape.prototype.indent = function(x,y,radius) {
@@ -164,17 +173,21 @@
     }
 
     window.game.scenery.Landscape.prototype.updateVerticeAt = function(x,z) {
-        var height = this.points[x][z];
-        this.surfaceGeometry.vertices[x*this.ypoints + z].y = (height < 0) ? 0 : height;
+    	if (this.isInBounds(x,z)) {
+        	var height = this.points[x][z];
+        	this.surfaceGeometry.vertices[x*this.ypoints + z].y = (height < 0) ? 0 : height;
+    	}
     }
 
     window.game.scenery.Landscape.prototype.setVerticeAt = function(x,z) {
-        var height = this.points[x][z];
-        if (height < 0) {
-            height = 0;
-        }
-        this.surfaceGeometry.vertices[x*this.ypoints + z] =
-            new THREE.Vector3(x-(this.xpoints/2),height,z-(this.ypoints/2));
+    	if (this.isInBounds(x,z)) {
+	        var height = this.points[x][z];
+	        if (height < 0) {
+	            height = 0;
+	        }
+	        this.surfaceGeometry.vertices[x*this.ypoints + z] =
+	            new THREE.Vector3(x-(this.xpoints/2),height,z-(this.ypoints/2));
+		}
     }
 
     window.game.scenery.Landscape.prototype.getMesh = function() {
@@ -187,6 +200,13 @@
             }
         }
         
+        // var grassTexture = new THREE.ImageUtils.loadTexture("images/grass-texture.jpg");
+        // grassTexture.min_filter = THREE.LinearFilter;
+		// grassTexture.mag_filter = THREE.LinearFilter;
+		// grassTexture.wrapS = THREE.RepeatWrapping;
+		// grassTexture.wrapT = THREE.RepeatWrapping;
+		//grassTexture.repeat.x = 2;
+		//grassTexture.repeat.y = 2;
         
         for (var x = 0 ; x < (this.xpoints-1); x++) {
             for (var y = 0; y < (this.ypoints-1); y++) {
@@ -198,7 +218,8 @@
         this.surfaceGeometry.computeFaceNormals();
         this.surfaceGeometry.computeVertexNormals();
 //        var material = new THREE.MeshPhongMaterial( { ambient: 0x403030, color: 0xdddddd, specular: 0x262320, shininess: 5, shading: THREE.SmoothShading });
-        var material = new THREE.MeshLambertMaterial({color: 0xcccccc, ambient: 0x303030, emissive: 0x000200, shading: THREE.SmoothShading});
+        var material = new THREE.MeshLambertMaterial({color: 0x66cc66, ambient: 0x303030, emissive: 0x000200, shading: THREE.SmoothShading});
+        //var material = new THREE.MeshBasicMaterial({map: grassTexture});
         var mesh = new THREE.Mesh( this.surfaceGeometry, material );
         mesh.geometry.dynamic = true;
         mesh.position.y = 0;	
@@ -219,10 +240,12 @@
     
     window.game.scenery.Landscape.prototype.setElevation = function(x, z, newElevation) {
     	var xPoints, altitude = 0;
-    	xPoints = this.points[Math.floor(x + (this.xpoints /2))];
-    	if (xPoints) {
-    		xPoints[Math.floor(z + (this.ypoints / 2))] = Math.max(0, newElevation);
-    	}
+    	if (this.isInBounds(x,z)) {
+	    	xPoints = this.points[Math.floor(x + (this.xpoints /2))];
+	    	if (xPoints) {
+		    	xPoints[Math.floor(z + (this.ypoints / 2))] = Math.max(0, newElevation);	
+	    	}
+	    }
     };
 
     
